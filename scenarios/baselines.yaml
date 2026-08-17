@@ -1,0 +1,19 @@
+plant:
+  engine_count: 5
+  engine_capacity_mw: 3
+  target_load_mw: 10
+
+engine:
+  electrical_efficiency: 0.40
+  availability: 0.95
+
+gas:
+  price_usd_mmbtu: 8.0
+
+cooling:
+  heat_recovery_efficiency: 0.60
+  absorption_chiller_cop: 0.70
+
+ppa:
+  energy_price_usd_kwh: 0.15
+  capacity_payment_usd_month: 20000
