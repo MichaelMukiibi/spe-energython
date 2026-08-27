@@ -1,0 +1,543 @@
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bp-bg:#0a1929; --bp-bg2:#0d2136; --bp-line:#1c3a56; --bp-line-soft:#15304a;
+    --ink:#dbe9f5; --ink-dim:#7e9cb5; --ink-faint:#4c6884;
+    --c-mech:#9fb4c9; --c-mech-fill:#16293e;
+    --c-gas:#e8a33d; --c-steam:#5fd3f3; --c-water:#3d8fe8; --c-elec:#ef5a52;
+    --c-ctrl:#b083f0; --c-grid:#5fd97a; --c-site:#7e9cb5;
+    --accent:#5fd3f3;
+    font-family:'IBM Plex Sans',sans-serif;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--bp-bg);color:var(--ink);}
+  .app{display:flex;flex-direction:column;height:100vh;min-height:640px;background:
+    linear-gradient(var(--bp-bg2),var(--bp-bg2)) ;}
+  header.top{
+    padding:14px 18px 10px;border-bottom:1px solid var(--bp-line);
+    display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:8px;
+  }
+  .title-block h1{font-size:16px;margin:0;letter-spacing:.04em;text-transform:uppercase;color:var(--ink);font-weight:600;}
+  .title-block .sub{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--ink-dim);margin-top:3px;letter-spacing:.02em;}
+  .tabs{display:flex;gap:2px;background:var(--bp-bg);border:1px solid var(--bp-line);border-radius:6px;padding:2px;}
+  .tabs button{
+    font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.05em;text-transform:uppercase;
+    background:transparent;border:none;color:var(--ink-dim);padding:7px 14px;border-radius:4px;cursor:pointer;
+  }
+  .tabs button.active{background:var(--bp-line-soft);color:var(--accent);}
+  .controls{
+    display:flex;gap:18px;align-items:center;flex-wrap:wrap;padding:10px 18px;
+    border-bottom:1px solid var(--bp-line);font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--ink-dim);
+  }
+  .layer-toggle{display:flex;align-items:center;gap:6px;cursor:pointer;user-select:none;padding:4px 8px;border-radius:4px;border:1px solid transparent;}
+  .layer-toggle:hover{border-color:var(--bp-line);}
+  .layer-toggle input{accent-color:var(--accent);}
+  .swatch{width:10px;height:10px;border-radius:2px;display:inline-block;}
+  .controls select{
+    background:var(--bp-bg);color:var(--ink);border:1px solid var(--bp-line);border-radius:4px;
+    font-family:'IBM Plex Mono',monospace;font-size:11px;padding:5px 8px;
+  }
+  .controls .divider{width:1px;height:18px;background:var(--bp-line);}
+  main{flex:1;position:relative;overflow:hidden;}
+  #view2d, #view3d{position:absolute;inset:0;}
+  #view3d{display:none;}
+  svg#schematic{width:100%;height:100%;display:block;}
+  .comp-label{font-family:'IBM Plex Mono',monospace;fill:var(--ink);font-size:9.5px;}
+  .comp-sub{font-family:'IBM Plex Mono',monospace;fill:var(--ink-dim);font-size:8px;}
+  .zone-label{font-family:'IBM Plex Mono',monospace;fill:var(--ink-faint);font-size:9px;letter-spacing:.12em;text-transform:uppercase;}
+  .dimmed{opacity:.12;transition:opacity .25s;}
+  .full{opacity:1;transition:opacity .25s;}
+  #canvas3d{width:100%;height:100%;display:block;cursor:grab;}
+  #canvas3d:active{cursor:grabbing;}
+  .hint3d{
+    position:absolute;left:18px;bottom:16px;font-family:'IBM Plex Mono',monospace;font-size:10.5px;
+    color:var(--ink-dim);background:rgba(10,25,41,.7);border:1px solid var(--bp-line);border-radius:6px;padding:8px 12px;
+    pointer-events:none;
+  }
+  .legend{
+    position:absolute;right:18px;top:16px;background:rgba(10,25,41,.85);border:1px solid var(--bp-line);
+    border-radius:6px;padding:10px 12px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--ink-dim);
+    display:flex;flex-direction:column;gap:5px;min-width:158px;
+  }
+  .legend .row{display:flex;align-items:center;gap:7px;}
+  .legend .ln{width:16px;height:0;border-top:2px solid;display:inline-block;}
+  .footnote{
+    font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--ink-faint);padding:8px 18px;
+    border-top:1px solid var(--bp-line);letter-spacing:.01em;
+  }
+  ::selection{background:var(--accent);color:#04121e;}
+</style>
+
+<div class="app">
+  <header class="top">
+    <div class="title-block">
+      <h1>20 MW CHP Plant &mdash; General Arrangement</h1>
+      <div class="sub">2x Kawasaki M7A-03D &middot; Dual-Inlet HRSG &middot; Siemens SST-200 &middot; CNG Fuel Train &middot; TCN 33kV Interconnection</div>
+    </div>
+    <div class="tabs">
+      <button id="tab2d" class="active">2D Schematic</button>
+      <button id="tab3d">3D Model</button>
+    </div>
+  </header>
+
+  <div class="controls" id="controlsBar"></div>
+
+  <main>
+    <div id="view2d"><svg id="schematic" viewBox="0 0 1200 800"></svg></div>
+    <div id="view3d">
+      <canvas id="canvas3d"></canvas>
+      <div class="hint3d">drag to rotate &middot; scroll / pinch to zoom &middot; right-drag to pan</div>
+    </div>
+    <div class="legend" id="legendBox"></div>
+  </main>
+
+  <div class="footnote">Conceptual process-flow arrangement for design coordination &mdash; not a stamped P&amp;ID or single-line diagram. Equipment footprints scaled from manufacturer package data where available; verify all dimensions and setbacks against your EPC contractor's certified drawings and NESREA / TCN interconnection requirements before construction.</div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+/* =========================================================================
+   SINGLE SOURCE OF TRUTH
+   Every component and connection is defined once, in 2D plan coordinates.
+   The 3D view derives its positions from these SAME coordinates through one
+   fixed mapping function (mapTo3D), so the two views can never disagree
+   about where anything sits.
+   ========================================================================= */
+
+const CATS = {
+  mech:   {label:'Equipment',                 color:'#9fb4c9'},
+  gas:    {label:'CNG / Gas Piping',           color:'#e8a33d'},
+  steam:  {label:'Steam Lines',                color:'#5fd3f3'},
+  water:  {label:'Water / Condensate Lines',   color:'#3d8fe8'},
+  exh:    {label:'Exhaust Ducting',            color:'#c97b4a'},
+  elec:   {label:'Electrical / Power',         color:'#ef5a52'},
+  ctrl:   {label:'Control & Instrumentation',  color:'#b083f0'},
+  grid:   {label:'Grid Connection',            color:'#5fd97a'},
+  site:   {label:'Site / Buildings',           color:'#7e9cb5'},
+};
+
+// x,y in a 1200 x 800 plan. w,h = footprint. shape: 'rect' | 'cyl'.
+// h3d = height above grade used in the 3D model (arbitrary consistent units).
+const COMPONENTS = [
+  // --- Grid / electrical, north end of site ---
+  {id:'grid',      name:'TCN Grid Interconnection',        sub:'33 kV point of common coupling', cat:'grid', x:600,y:36,  w:180,h:26, shape:'rect', h3d:6},
+  {id:'xfmr1',     name:'Step-Up Transformer T1',           sub:'15 MVA, 6.6/33 kV',               cat:'elec', x:478,y:104,w:76,h:52, shape:'rect', h3d:26},
+  {id:'xfmr2',     name:'Step-Up Transformer T2',           sub:'15 MVA, 6.6/33 kV',               cat:'elec', x:648,y:104,w:76,h:52, shape:'rect', h3d:26},
+  {id:'swgr',      name:'Main Switchgear',                  sub:'6.6 kV, sync bus, 3 incomers',    cat:'elec', x:562,y:188,w:150,h:46, shape:'rect', h3d:22},
+  {id:'auxxfmr',   name:'Auxiliary Step-Down Transformer',  sub:'6.6 kV / 0.4 kV house load',      cat:'elec', x:330,y:222,w:64,h:40, shape:'rect', h3d:18},
+
+  // --- Power train ---
+  {id:'kaw1',      name:'Kawasaki M7A-03D GT-1',            sub:'8 MW + Brush DG generator',       cat:'mech', x:232,y:308,w:132,h:58, shape:'rect', h3d:34},
+  {id:'kaw2',      name:'Kawasaki M7A-03D GT-2',             sub:'8 MW + Brush DG generator',       cat:'mech', x:232,y:406,w:132,h:58, shape:'rect', h3d:34},
+  {id:'hrsg',      name:'HRSG',                              sub:'2 inlet / 1 outlet, 34-40 t/h',   cat:'mech', x:452,y:300,w:96, h:170,shape:'rect', h3d:58},
+  {id:'stack',     name:'HRSG Exhaust Stack',                 sub:'~32m tall, integral to HRSG, exhaust fumes to atmosphere', cat:'mech', x:490,y:310,w:20, h:20, shape:'cyl',  h3d:150, restsOn:'hrsg'},
+  {id:'sst200',    name:'Siemens SST-200',                   sub:'5 MW + industrial generator',     cat:'mech', x:622,y:376,w:112,h:56, shape:'rect', h3d:30},
+  {id:'condenser', name:'Condenser',                         sub:'steam exhaust condensing',        cat:'mech', x:768,y:376,w:70, h:56, shape:'rect', h3d:24},
+
+  // --- Steam / water cycle ---
+  {id:'fwpump',    name:'Feedwater Pump Skid',               sub:'',                                 cat:'mech', x:452,y:492,w:44, h:30, shape:'rect', h3d:14},
+  {id:'watertank', name:'Feedwater Storage Tank',            sub:'',                                 cat:'mech', x:452,y:552,w:66, h:66, shape:'cyl',  h3d:34},
+  {id:'condtank',  name:'Condensate Return Tank',             sub:'',                                 cat:'mech', x:768,y:494,w:58, h:58, shape:'cyl',  h3d:28},
+
+  // --- CNG fuel train ---
+  {id:'presskid',  name:'CNG Pressure Reduction Skid',       sub:'250 bar \u2192 turbine inlet',    cat:'gas',  x:686,y:548,w:76, h:42, shape:'rect', h3d:16},
+  {id:'cngtank1',  name:'CNG Storage Tank 1',                 sub:'manifolded battery',              cat:'gas',  x:850,y:606,w:64, h:64, shape:'cyl',  h3d:40},
+  {id:'cngtank2',  name:'CNG Storage Tank 2',                 sub:'manifolded battery',              cat:'gas',  x:962,y:606,w:64, h:64, shape:'cyl',  h3d:40},
+  {id:'fillstn',   name:'Filling / Truck Offload Station',   sub:'virtual pipeline receipt point',  cat:'gas',  x:876,y:706,w:120,h:42, shape:'rect', h3d:20},
+  {id:'gasdet1',   name:'Gas Detector',                       sub:'',                                 cat:'ctrl', x:826,y:566,w:14, h:14, shape:'rect', h3d:8},
+  {id:'gasdet2',   name:'Gas Detector',                       sub:'',                                 cat:'ctrl', x:998,y:566,w:14, h:14, shape:'rect', h3d:8},
+
+  // --- Control & site ---
+  {id:'ctrlroom',  name:'Control Room',                       sub:'DCS / SCADA + hard-wired ESD',    cat:'site', x:158,y:494,w:120,h:64, shape:'rect', h3d:24},
+  {id:'admin',     name:'Admin Building',                     sub:'',                                 cat:'site', x:128,y:606,w:96, h:52, shape:'rect', h3d:20},
+  {id:'firewater', name:'Emergency Firewater Tank',            sub:'dedicated fire reserve, hydrant ring main', cat:'site', x:60,y:352,w:90, h:90, shape:'cyl', h3d:36},
+];
+
+const byId = id => COMPONENTS.find(c=>c.id===id);
+const center = c => ({x:c.x+c.w/2, y:c.y+c.h/2});
+
+// Connections: {a,b,cat,label,curve?, width?}
+const CONNECTIONS = [
+  // Electrical
+  {a:'kaw1',b:'swgr',cat:'elec'}, {a:'kaw2',b:'swgr',cat:'elec'}, {a:'sst200',b:'swgr',cat:'elec'},
+  {a:'swgr',b:'xfmr1',cat:'elec'}, {a:'swgr',b:'xfmr2',cat:'elec'},
+  {a:'xfmr1',b:'grid',cat:'elec'}, {a:'xfmr2',b:'grid',cat:'elec'},
+  {a:'swgr',b:'auxxfmr',cat:'elec',label:'house load'}, {a:'auxxfmr',b:'ctrlroom',cat:'elec',label:'aux. power'},
+
+  // Grid boundary
+  {a:'grid',b:'grid',cat:'grid'}, // placeholder not drawn; grid node itself is the boundary marker
+
+  // Exhaust ducting (hot gas, engines -> HRSG -> stack)
+  {a:'kaw1',b:'hrsg',cat:'exh',label:'exhaust inlet A'},
+  {a:'kaw2',b:'hrsg',cat:'exh',label:'exhaust inlet B'},
+  {a:'hrsg',b:'stack',cat:'exh',label:'stack discharge'},
+
+  // Steam
+  {a:'hrsg',b:'sst200',cat:'steam',label:'main steam 34-40 t/h',width:3.4},
+  {a:'sst200',b:'condenser',cat:'steam',label:'LP exhaust steam'},
+
+  // Water / condensate loop (closed loop back to feedwater tank)
+  {a:'watertank',b:'fwpump',cat:'water'},
+  {a:'fwpump',b:'hrsg',cat:'water',label:'feedwater'},
+  {a:'condenser',b:'condtank',cat:'water',label:'condensate'},
+  {a:'condtank',b:'watertank',cat:'water',label:'condensate return'},
+
+  // Gas
+  {a:'fillstn',b:'cngtank1',cat:'gas'}, {a:'fillstn',b:'cngtank2',cat:'gas'},
+  {a:'cngtank1',b:'cngtank2',cat:'gas',label:'level-balancing line'},
+  {a:'cngtank1',b:'presskid',cat:'gas'}, {a:'cngtank2',b:'presskid',cat:'gas'},
+  {a:'presskid',b:'kaw1',cat:'gas'}, {a:'presskid',b:'kaw2',cat:'gas'},
+
+  // Control / instrumentation -- control room reaches every major system
+  {a:'ctrlroom',b:'kaw1',cat:'ctrl'}, {a:'ctrlroom',b:'kaw2',cat:'ctrl'},
+  {a:'ctrlroom',b:'hrsg',cat:'ctrl'}, {a:'ctrlroom',b:'sst200',cat:'ctrl'},
+  {a:'ctrlroom',b:'condenser',cat:'ctrl'},
+  {a:'ctrlroom',b:'swgr',cat:'ctrl'}, {a:'ctrlroom',b:'xfmr1',cat:'ctrl'}, {a:'ctrlroom',b:'xfmr2',cat:'ctrl'},
+  {a:'ctrlroom',b:'auxxfmr',cat:'ctrl'},
+  {a:'ctrlroom',b:'presskid',cat:'ctrl'},
+  {a:'ctrlroom',b:'cngtank1',cat:'ctrl'}, {a:'ctrlroom',b:'cngtank2',cat:'ctrl'},
+  {a:'ctrlroom',b:'gasdet1',cat:'ctrl'}, {a:'ctrlroom',b:'gasdet2',cat:'ctrl'},
+  {a:'ctrlroom',b:'fwpump',cat:'ctrl'}, {a:'ctrlroom',b:'watertank',cat:'ctrl'}, {a:'ctrlroom',b:'condtank',cat:'ctrl'},
+  {a:'ctrlroom',b:'firewater',cat:'ctrl',label:'fire system monitoring'},
+  {a:'ctrlroom',b:'admin',cat:'ctrl',label:'comms link'},
+].filter(c=>!(c.a==='grid'&&c.b==='grid'));
+
+// zones drawn as dashed boundary rectangles in 2D (and low glass boxes in 3D)
+const ZONES = [
+  {label:'CNG Storage Setback Zone', x:800,y:560,w:280,h:220},
+  {label:'Power Island', x:210,y:280,w:640,h:200},
+];
+
+const FOCUS_GROUPS = {
+  all:      {label:'All Systems', cats:null},
+  power:    {label:'Power Generation Train', cats:['mech','exh','elec']},
+  steam:    {label:'Steam & Water Cycle', cats:['steam','water','mech']},
+  gas:      {label:'Gas / Fuel System', cats:['gas']},
+  elecgrid: {label:'Electrical & Grid', cats:['elec','grid']},
+  control:  {label:'Control & Instrumentation', cats:['ctrl']},
+};
+
+/* ---------------------------------------------------------------------- */
+/* Layer + focus state (shared by both views)                             */
+/* ---------------------------------------------------------------------- */
+const layerState = {mech:true, gas:true, steam:true, water:true, exh:true, elec:true, ctrl:true, grid:true, site:true};
+let focusKey = 'all';
+
+function buildControls(){
+  const bar = document.getElementById('controlsBar');
+  const layerDefs = [
+    ['mech','Equipment'], ['exh','Exhaust'], ['steam','Steam'], ['water','Water/Condensate'],
+    ['gas','CNG/Gas'], ['elec','Electrical'], ['ctrl','Control'], ['grid','Grid'], ['site','Buildings'],
+  ];
+  layerDefs.forEach(([key,label])=>{
+    const wrap = document.createElement('label');
+    wrap.className='layer-toggle';
+    wrap.innerHTML = `<input type="checkbox" checked data-layer="${key}"/><span class="swatch" style="background:${CATS[key].color}"></span>${label}`;
+    bar.appendChild(wrap);
+  });
+  const div = document.createElement('div'); div.className='divider'; bar.appendChild(div);
+
+  const focusWrap = document.createElement('label');
+  focusWrap.style.display='flex'; focusWrap.style.alignItems='center'; focusWrap.style.gap='6px';
+  focusWrap.innerHTML = 'Focus:';
+  const sel = document.createElement('select'); sel.id='focusSelect';
+  Object.entries(FOCUS_GROUPS).forEach(([k,v])=>{
+    const opt=document.createElement('option'); opt.value=k; opt.textContent=v.label; sel.appendChild(opt);
+  });
+  focusWrap.appendChild(sel);
+  bar.appendChild(focusWrap);
+
+  bar.addEventListener('change', e=>{
+    if(e.target.dataset.layer){ layerState[e.target.dataset.layer]=e.target.checked; refreshAll(); }
+    if(e.target.id==='focusSelect'){ focusKey=e.target.value; refreshAll(); }
+  });
+}
+
+function buildLegend(){
+  const box = document.getElementById('legendBox');
+  box.innerHTML = '<div style="color:var(--ink);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:2px;">Legend</div>' +
+    Object.entries(CATS).map(([k,v])=>`<div class="row"><span class="ln" style="border-color:${v.color}"></span>${v.label}</div>`).join('');
+}
+
+function isVisible(cat){
+  if(!layerState[cat]) return false;
+  const grp = FOCUS_GROUPS[focusKey];
+  if(!grp.cats) return true;
+  return grp.cats.includes(cat);
+}
+
+/* ========================================================================= */
+/* 2D SCHEMATIC (SVG)                                                        */
+/* ========================================================================= */
+const NS='http://www.w3.org/2000/svg';
+function el(tag,attrs){ const e=document.createElementNS(NS,tag); for(const k in attrs) e.setAttribute(k,attrs[k]); return e; }
+
+function drawBlueprintGrid(svg){
+  const g = el('g',{});
+  for(let x=0;x<=1200;x+=40){ g.appendChild(el('line',{x1:x,y1:0,x2:x,y2:800,stroke:'var(--bp-line-soft)','stroke-width':x%200===0?1:.5})); }
+  for(let y=0;y<=800;y+=40){ g.appendChild(el('line',{x1:0,y1:y,x2:1200,y2:y,stroke:'var(--bp-line-soft)','stroke-width':y%200===0?1:.5})); }
+  svg.appendChild(g);
+}
+
+function pathBetween(a,b){
+  const p1=center(byId(a)), p2=center(byId(b));
+  const midx=(p1.x+p2.x)/2, midy=(p1.y+p2.y)/2;
+  // orthogonal-ish routing for readability
+  return `M ${p1.x} ${p1.y} Q ${midx} ${p1.y} ${midx} ${midy} T ${p2.x} ${p2.y}`;
+}
+
+function render2D(){
+  const svg = document.getElementById('schematic');
+  svg.innerHTML='';
+  drawBlueprintGrid(svg);
+
+  // zones
+  ZONES.forEach(z=>{
+    svg.appendChild(el('rect',{x:z.x,y:z.y,width:z.w,height:z.h,fill:'none',stroke:'var(--ink-faint)','stroke-width':1,'stroke-dasharray':'6 5',rx:6}));
+    const t=el('text',{x:z.x+10,y:z.y+16,class:'zone-label'}); t.textContent=z.label; svg.appendChild(t);
+  });
+
+  // connections (drawn under components)
+  const connLayer = el('g',{});
+  CONNECTIONS.forEach(c=>{
+    const visible = isVisible(c.cat);
+    const p = pathBetween(c.a,c.b);
+    const path = el('path',{d:p, fill:'none', stroke:CATS[c.cat].color, 'stroke-width':c.width||1.6, class: visible?'full':'dimmed'});
+    if(c.cat==='ctrl'||c.cat==='exh') path.setAttribute('stroke-dasharray','5 4');
+    if(c.cat==='steam') path.setAttribute('stroke-dasharray', c.label && c.label.includes('LP') ? '2 4':'none');
+    connLayer.appendChild(path);
+  });
+  svg.appendChild(connLayer);
+
+  // components
+  const compLayer = el('g',{});
+  COMPONENTS.forEach(c=>{
+    const visible = isVisible(c.cat);
+    const g = el('g',{class: visible?'full':'dimmed'});
+    const color = CATS[c.cat].color;
+    if(c.shape==='cyl'){
+      g.appendChild(el('ellipse',{cx:c.x+c.w/2, cy:c.y+c.w/2, rx:c.w/2, ry:c.w/2, fill:'var(--c-mech-fill)', stroke:color, 'stroke-width':1.4}));
+    } else {
+      g.appendChild(el('rect',{x:c.x,y:c.y,width:c.w,height:c.h, fill:'var(--c-mech-fill)', stroke:color, 'stroke-width':1.4, rx:3}));
+    }
+    if(c.w>=40){
+      const label = el('text',{x:c.x+c.w/2,y:c.y+c.h/2 - (c.sub?4:-3),class:'comp-label','text-anchor':'middle'});
+      label.textContent=c.name; g.appendChild(label);
+      if(c.sub){
+        const sub = el('text',{x:c.x+c.w/2,y:c.y+c.h/2+9,class:'comp-sub','text-anchor':'middle'});
+        sub.textContent=c.sub; g.appendChild(sub);
+      }
+    }
+    compLayer.appendChild(g);
+  });
+  svg.appendChild(compLayer);
+}
+
+/* ========================================================================= */
+/* 3D MODEL (three.js) -- positions derived from the SAME COMPONENTS array   */
+/* ========================================================================= */
+// Fixed mapping: 2D plan (x,y) -> 3D (x,z). North (small 2D y) maps to
+// negative Z, consistent with the 2D view's "up = north" convention, and
+// 2D x maps directly to 3D x (no inversion). This single function is the
+// only place a coordinate transform happens, so 2D and 3D can't drift apart.
+const SCALE = 1/6.2;
+function mapTo3D(x2d,y2d){
+  return { x: (x2d-600)*SCALE, z: (y2d-420)*SCALE };
+}
+
+let scene, camera, renderer, group3d;
+let orbit = {theta: Math.PI*0.28, phi: 1.0, radius: 240, target:new THREE.Vector3(0,10,0)};
+let dragging=false, panning=false, lastX=0, lastY=0;
+
+function initThree(){
+  const canvas = document.getElementById('canvas3d');
+  scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x0a1929);
+  scene.fog = new THREE.Fog(0x0a1929, 260, 620);
+
+  camera = new THREE.PerspectiveCamera(42, canvas.clientWidth/canvas.clientHeight, 0.1, 2000);
+  renderer = new THREE.WebGLRenderer({canvas, antialias:true});
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+
+  const hemi = new THREE.HemisphereLight(0x9fc4e8, 0x0a1929, 0.9); scene.add(hemi);
+  const dir = new THREE.DirectionalLight(0xffffff, 0.7); dir.position.set(120,180,80); scene.add(dir);
+
+  // ground grid
+  const gridHelper = new THREE.GridHelper(220, 44, 0x1c3a56, 0x15304a);
+  scene.add(gridHelper);
+  const groundGeo = new THREE.PlaneGeometry(220,220);
+  const groundMat = new THREE.MeshBasicMaterial({color:0x0d2136, transparent:true, opacity:0.6});
+  const ground = new THREE.Mesh(groundGeo, groundMat); ground.rotation.x=-Math.PI/2; ground.position.y=-0.15;
+  scene.add(ground);
+
+  group3d = new THREE.Group();
+  scene.add(group3d);
+
+  buildComponents3D();
+  buildConnections3D();
+  buildZones3D();
+
+  canvas.addEventListener('mousedown', e=>{ if(e.button===2){panning=true;} else {dragging=true;} lastX=e.clientX; lastY=e.clientY; });
+  window.addEventListener('mouseup', ()=>{dragging=false;panning=false;});
+  window.addEventListener('mousemove', e=>{
+    if(!dragging && !panning) return;
+    const dx=e.clientX-lastX, dy=e.clientY-lastY; lastX=e.clientX; lastY=e.clientY;
+    if(dragging){
+      orbit.theta -= dx*0.0055;
+      orbit.phi = Math.min(Math.max(orbit.phi - dy*0.0055, 0.15), 1.5);
+    } else if(panning){
+      const panSpeed = orbit.radius*0.0016;
+      const forward = new THREE.Vector3(Math.sin(orbit.theta),0,Math.cos(orbit.theta));
+      const right = new THREE.Vector3(forward.z,0,-forward.x);
+      orbit.target.addScaledVector(right, -dx*panSpeed);
+      orbit.target.addScaledVector(forward, dy*panSpeed);
+    }
+  });
+  canvas.addEventListener('contextmenu', e=>e.preventDefault());
+  canvas.addEventListener('wheel', e=>{
+    e.preventDefault();
+    orbit.radius = Math.min(Math.max(orbit.radius + e.deltaY*0.25, 60), 520);
+  }, {passive:false});
+
+  let touchLast=null, pinchDist=null;
+  canvas.addEventListener('touchstart', e=>{
+    if(e.touches.length===1){ touchLast={x:e.touches[0].clientX,y:e.touches[0].clientY}; }
+    else if(e.touches.length===2){ pinchDist=touchDist(e.touches); }
+  });
+  canvas.addEventListener('touchmove', e=>{
+    e.preventDefault();
+    if(e.touches.length===1 && touchLast){
+      const dx=e.touches[0].clientX-touchLast.x, dy=e.touches[0].clientY-touchLast.y;
+      touchLast={x:e.touches[0].clientX,y:e.touches[0].clientY};
+      orbit.theta -= dx*0.0055; orbit.phi = Math.min(Math.max(orbit.phi - dy*0.0055,0.15),1.5);
+    } else if(e.touches.length===2 && pinchDist){
+      const d=touchDist(e.touches);
+      orbit.radius = Math.min(Math.max(orbit.radius - (d-pinchDist)*0.4, 60), 520);
+      pinchDist=d;
+    }
+  }, {passive:false});
+  function touchDist(t){ const dx=t[0].clientX-t[1].clientX, dy=t[0].clientY-t[1].clientY; return Math.sqrt(dx*dx+dy*dy); }
+
+  resize3D();
+  window.addEventListener('resize', resize3D);
+  animate3D();
+}
+
+function resize3D(){
+  const canvas = document.getElementById('canvas3d');
+  const w = canvas.clientWidth || canvas.parentElement.clientWidth;
+  const h = canvas.clientHeight || canvas.parentElement.clientHeight;
+  if(!w||!h) return;
+  renderer.setSize(w,h,false);
+  camera.aspect = w/h; camera.updateProjectionMatrix();
+}
+
+function animate3D(){
+  requestAnimationFrame(animate3D);
+  const {theta,phi,radius,target} = orbit;
+  camera.position.set(
+    target.x + radius*Math.sin(phi)*Math.sin(theta),
+    target.y + radius*Math.cos(phi),
+    target.z + radius*Math.sin(phi)*Math.cos(theta)
+  );
+  camera.lookAt(target);
+  renderer.render(scene,camera);
+}
+
+const meshById = {};
+function colorFor(cat){ return new THREE.Color(CATS[cat].color); }
+
+function buildComponents3D(){
+  COMPONENTS.forEach(c=>{
+    const cy2d = c.y3d!==undefined ? c.y3d : (c.y + c.h/2);
+    const {x,z} = mapTo3D(c.x + c.w/2, cy2d);
+    const w3 = c.w*SCALE, d3 = c.h*SCALE, h3 = c.h3d*SCALE*1.4;
+    let mesh;
+    const mat = new THREE.MeshStandardMaterial({color:colorFor(c.cat), transparent:true, opacity:0.85, roughness:.55, metalness:.15});
+    const edgeMat = new THREE.LineBasicMaterial({color:colorFor(c.cat)});
+    if(c.shape==='cyl'){
+      const geo = new THREE.CylinderGeometry(Math.min(w3,d3)/2, Math.min(w3,d3)/2, h3, 24);
+      mesh = new THREE.Mesh(geo, mat);
+    } else {
+      const geo = new THREE.BoxGeometry(w3, h3, d3);
+      mesh = new THREE.Mesh(geo, mat);
+      const edges = new THREE.LineSegments(new THREE.EdgesGeometry(geo), edgeMat);
+      mesh.add(edges);
+    }
+    const restBase = c.restsOn ? (byId(c.restsOn).h3d*SCALE*1.4) : 0;
+    mesh.position.set(x, restBase + h3/2, z);
+    mesh.userData = {id:c.id, cat:c.cat};
+    group3d.add(mesh);
+    meshById[c.id] = mesh;
+  });
+}
+
+function buildConnections3D(){
+  CONNECTIONS.forEach(c=>{
+    const ca = byId(c.a), cb = byId(c.b);
+    const pa = mapTo3D(ca.x+ca.w/2, ca.y+ca.h/2);
+    const pb = mapTo3D(cb.x+cb.w/2, cb.y+cb.h/2);
+    // route height depends on category so lines don't all overlap on the ground
+    const h = c.cat==='elec' ? 14*SCALE*3 : c.cat==='ctrl' ? 10*SCALE*3 : c.cat==='exh' ? 20*SCALE*3 : c.cat==='steam' ? 16*SCALE*3 : 6*SCALE*3;
+    const ya = (ca.h3d*SCALE*1.4)*0.55, yb=(cb.h3d*SCALE*1.4)*0.55;
+    const mid = new THREE.Vector3((pa.x+pb.x)/2, Math.max(ya,yb)+h, (pa.z+pb.z)/2);
+    const curve = new THREE.QuadraticBezierCurve3(
+      new THREE.Vector3(pa.x, ya, pa.z), mid, new THREE.Vector3(pb.x, yb, pb.z)
+    );
+    const points = curve.getPoints(20);
+    const geo = new THREE.BufferGeometry().setFromPoints(points);
+    const mat = new THREE.LineBasicMaterial({color:colorFor(c.cat), transparent:true, opacity:0.9, linewidth:2});
+    const line = new THREE.Line(geo,mat);
+    line.userData = {cat:c.cat, kind:'connection'};
+    group3d.add(line);
+  });
+}
+
+function buildZones3D(){
+  ZONES.forEach(z=>{
+    const {x:x1,z:z1} = mapTo3D(z.x, z.y);
+    const {x:x2,z:z2} = mapTo3D(z.x+z.w, z.y+z.h);
+    const w=Math.abs(x2-x1), d=Math.abs(z2-z1);
+    const geo = new THREE.EdgesGeometry(new THREE.BoxGeometry(w, 0.01, d));
+    const mat = new THREE.LineBasicMaterial({color:0x4c6884, transparent:true, opacity:.5});
+    const box = new THREE.LineSegments(geo,mat);
+    box.position.set((x1+x2)/2, 0.2, (z1+z2)/2);
+    box.userData = {kind:'zone'};
+    group3d.add(box);
+  });
+}
+
+function refresh3DVisibility(){
+  group3d.children.forEach(obj=>{
+    if(obj.userData.kind==='zone'){ obj.visible = true; return; }
+    const cat = obj.userData.cat;
+    if(!cat){ obj.visible = true; return; }
+    obj.visible = isVisible(cat);
+  });
+}
+
+/* ---------------------------------------------------------------------- */
+function refreshAll(){
+  render2D();
+  if(scene) refresh3DVisibility();
+}
+
+function switchTab(to){
+  document.getElementById('tab2d').classList.toggle('active', to==='2d');
+  document.getElementById('tab3d').classList.toggle('active', to==='3d');
+  document.getElementById('view2d').style.display = to==='2d' ? 'block':'none';
+  document.getElementById('view3d').style.display = to==='3d' ? 'block':'none';
+  if(to==='3d'){
+    if(!scene){ initThree(); refresh3DVisibility(); }
+    setTimeout(resize3D, 30);
+  }
+}
+
+document.getElementById('tab2d').addEventListener('click', ()=>switchTab('2d'));
+document.getElementById('tab3d').addEventListener('click', ()=>switchTab('3d'));
+
+buildControls();
+buildLegend();
+render2D();
+</script>

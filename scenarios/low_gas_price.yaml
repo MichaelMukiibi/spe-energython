@@ -1,0 +1,5 @@
+# Low-gas-price scenario — overrides baselines.yaml
+# Single-variable stress: delivered CNG cost at the lower end of a defensible Nigerian range.
+# $8/MMBtu (baseline) -> $6.0/MMBtu. All other parameters identical to baselines.yaml.
+fuel:
+  price_usd_per_mmbtu: 6.0
