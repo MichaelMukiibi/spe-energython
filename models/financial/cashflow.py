@@ -1,4 +1,5 @@
 """Project and equity cash-flow waterfall."""
+
 from __future__ import annotations
 
 import numpy as np
@@ -40,7 +41,9 @@ def build_cashflows(cfg, revenue_df, opex_df, capex, debt, horizon):
         opex[yr] = opx
         ebitda[yr] = rev - opx
         depreciation[yr] = dep_per_year if yr <= dep_years else 0.0
-        ebt[yr] = max(ebitda[yr] - depreciation[yr] - schedule["interest_payment_usd"][yr], 0.0)
+        ebt[yr] = max(
+            ebitda[yr] - depreciation[yr] - schedule["interest_payment_usd"][yr], 0.0
+        )
         tax[yr] = ebt[yr] * tax_rate
         project_cf[yr] = ebitda[yr] - tax[yr]
         equity_cf[yr] = project_cf[yr] - debt_service[yr]

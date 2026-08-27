@@ -1,4 +1,5 @@
 """Return metrics: NPV, IRR, payback, simple LCOE."""
+
 from __future__ import annotations
 
 import numpy as np
@@ -59,7 +60,9 @@ def lcoe(cfg, capex, revenue_df, opex_df, discount_rate):
     npv_energy = 0.0
     for yr in range(1, horizon + 1):
         opx = float(opex_df.loc[yr, "total_opex_usd"])
-        mwh = float(revenue_df.loc[yr, "dc_mwh"]) + float(revenue_df.loc[yr, "export_mwh"])
+        mwh = float(revenue_df.loc[yr, "dc_mwh"]) + float(
+            revenue_df.loc[yr, "export_mwh"]
+        )
         npv_costs += opx / disc[yr]
         npv_energy += mwh / disc[yr]
     return npv_costs / npv_energy if npv_energy > 0 else float("nan")
@@ -80,7 +83,9 @@ def summary_metrics(cfg, cashflows, revenue_df, opex_df, capex, discount_rate):
         "equity_irr_pct": irr(equity) * 100.0,
         "project_payback_years": payback_years(project_acf),
         "equity_payback_years": payback_years(equity_acf),
-        "min_dscr": float(np.min(dscr_array[dscr_array > 0])) if np.any(dscr_array > 0) else None,
+        "min_dscr": float(np.min(dscr_array[dscr_array > 0]))
+        if np.any(dscr_array > 0)
+        else None,
         "equity_invested_usd": cashflows["equity_invested_usd"],
         "capex_usd": capex,
         "lcoe_usd_per_mwh": lcoe(cfg, capex, revenue_df, opex_df, discount_rate),

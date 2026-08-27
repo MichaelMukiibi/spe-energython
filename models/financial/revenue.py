@@ -1,4 +1,5 @@
 """Revenue model: data-center energy, exports, imports, capacity payments."""
+
 from __future__ import annotations
 
 import numpy as np
@@ -26,9 +27,7 @@ def annual_revenue(cfg, year, annual_energy, t_models, availability):
     energy_revenue = dc_mwh * p["energy_price_usd_per_kwh"] * 1000 * esc
     export_revenue = export_mwh * p["export_price_usd_per_kwh"] * 1000 * esc
     import_cost = import_mwh * p["import_price_usd_per_kwh"] * 1000 * esc
-    capacity_revenue = (
-        p["capacity_payment_usd_per_month"] * 12.0 * availability * esc
-    )
+    capacity_revenue = p["capacity_payment_usd_per_month"] * 12.0 * availability * esc
 
     return {
         "year": year,
@@ -39,7 +38,10 @@ def annual_revenue(cfg, year, annual_energy, t_models, availability):
         "export_revenue_usd": export_revenue,
         "import_cost_usd": import_cost,
         "capacity_revenue_usd": capacity_revenue,
-        "total_revenue_usd": energy_revenue + export_revenue + capacity_revenue - import_cost,
+        "total_revenue_usd": energy_revenue
+        + export_revenue
+        + capacity_revenue
+        - import_cost,
     }
 
 

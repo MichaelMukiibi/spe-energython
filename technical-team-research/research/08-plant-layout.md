@@ -7,6 +7,7 @@
 ## Design Brief (from the original design conversation)
 
 **Layout brief ("New Microsoft Word Document"):**
+
 - 2x Kawasaki gas engines, each with its own synchronized generator (8 MW rating each, ~15.6 MW
   combined actual)
 - Combined exhaust: ~195,000 kg/h @ 526°C from both engines into one HRSG
@@ -19,6 +20,7 @@
 - Plus: transformers, switchgear, and everything a 20 MW plant is meant to have
 
 **Design decisions locked in that conversation:**
+
 - Grid standard confirmed: 50 Hz
 - Grid-tied export confirmed (utility wants 10–20 MW flexible output; excess power goes to grid at time t)
 - Country: **Nigeria** (good natural gas + developed systems; AI data center needs a supporting
@@ -89,9 +91,10 @@ Storage Tank.
 - Auxiliary power: step-down transformer 6.6 kV → 0.4 kV taps the MV switchgear for internal
   control-room power. DCS + ESD instrumentation lines run to every field sensor, governor,
   balancing valve, and breaker.
-- *Disclaimer in the source artifact: conceptual process-flow arrangement, not a stamped P&ID /
-  SLD; verify dimensions/setbacks against EPC certified drawings and NESREA/TCN requirements.*
+- _Disclaimer in the source artifact: conceptual process-flow arrangement, not a stamped P&ID /
+  SLD; verify dimensions/setbacks against EPC certified drawings and NESREA/TCN requirements._
 
 ---
 
-*Sources: `plant_layout.docx`; `New Microsoft Word Document.docx`; `plant_layout.html` / `plant_layout.html -2 / __1_ (3)` variants (kept best: ../assets/plant-layout.html); Gemini export 6_39_44 §9.*
+_Sources: `plant_layout.docx`; `New Microsoft Word Document.docx`; `plant_layout.html` / `plant_layout.html -2 / __1_ (3)` variants (kept best: ../assets/plant-layout.html); Gemini export 6_39_44 §9._
+

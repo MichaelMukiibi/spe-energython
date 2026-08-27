@@ -1,5 +1,6 @@
 """End-to-end project run: profiles -> dispatch -> physical -> revenue -> opex
 -> debt -> cash flows -> metrics, for a given config."""
+
 from __future__ import annotations
 
 from pathlib import Path
@@ -7,21 +8,23 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
+from models.financial.capex import capex_build_up
+from models.financial.cashflow import build_cashflows
+from models.financial.financing import DebtSchedule
+from models.financial.opex import annual_opex
+from models.financial.returns import summary_metrics
+from models.financial.revenue import annual_revenue
 from models.loader import ROOT
 from models.operational.dispatch import availability_mask
 from models.physical.combined_cycle import run_hourly
-from models.financial.capex import capex_build_up
-from models.financial.revenue import annual_revenue
-from models.financial.opex import annual_opex
-from models.financial.financing import DebtSchedule
-from models.financial.cashflow import build_cashflows
-from models.financial.returns import summary_metrics
 
 
 def load_profile_mw(cfg, phase_key, scenario, root=ROOT):
     """Load a phase+scenario hourly facility-load profile (MW)."""
     base = cfg["dc_ramp"][phase_key]["profile_base"]
-    path = Path(root) / cfg["data_center"]["phase_profiles_dir"] / f"{base}_{scenario}.csv"
+    path = (
+        Path(root) / cfg["data_center"]["phase_profiles_dir"] / f"{base}_{scenario}.csv"
+    )
     df = pd.read_csv(path)
     return (df["facility_load_kw"].to_numpy(dtype=float) / 1000.0).astype(float)
 
@@ -77,7 +80,9 @@ def run_project(cfg, load_scenario=None, dispatch_mode=None, capex_multiplier=1.
         }
 
         rev = annual_revenue(cfg, yr, annual, t, annual["availability"])
-        opx = annual_opex(cfg, yr, annual["fuel_mmbtu"], annual["mwh"], capex["total_capex_usd"])
+        opx = annual_opex(
+            cfg, yr, annual["fuel_mmbtu"], annual["mwh"], capex["total_capex_usd"]
+        )
 
         rev_rows.append({"year": yr, **rev})
         opx_rows.append({"year": yr, **opx})
@@ -98,7 +103,9 @@ def run_project(cfg, load_scenario=None, dispatch_mode=None, capex_multiplier=1.
 
     debt = DebtSchedule(cfg, capex["total_capex_usd"])
     discount = cfg["financing"]["discount_rate_pct"] / 100.0
-    cf = build_cashflows(cfg, revenue_df, opex_df, capex["total_capex_usd"], debt, horizon)
+    cf = build_cashflows(
+        cfg, revenue_df, opex_df, capex["total_capex_usd"], debt, horizon
+    )
     # build_cashflows reads total_revenue_usd/total_opex_usd by .loc[year]; indexes are year.
     metrics = summary_metrics(
         cfg, cf, revenue_df, opex_df, capex["total_capex_usd"], discount

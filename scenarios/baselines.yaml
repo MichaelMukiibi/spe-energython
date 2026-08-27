@@ -18,60 +18,60 @@ project:
 plant:
   configuration: "2x1 CCGT — 2x Kawasaki GPB80D + Siemens SST-200"
   gas_turbine_count: 2
-  gas_turbine_capacity_mw: 7.67          # Kawasaki GPB80D (M7A-03D), ISO 15C
-  steam_turbine_capacity_mw: 4.72        # Siemens SST-200 condensing
-  gross_capacity_mw: 20.06               # 2*7.67 + 4.72
-  parasitic_load_mw: 0.46                # station auxiliary / house load
-  net_capacity_mw: 19.60                 # ~19.60–20.00 net envelope (midpoint)
-  combined_cycle_efficiency: 0.44        # 43.5–45.0%
+  gas_turbine_capacity_mw: 7.67 # Kawasaki GPB80D (M7A-03D), ISO 15C
+  steam_turbine_capacity_mw: 4.72 # Siemens SST-200 condensing
+  gross_capacity_mw: 20.06 # 2*7.67 + 4.72
+  parasitic_load_mw: 0.46 # station auxiliary / house load
+  net_capacity_mw: 19.60 # ~19.60–20.00 net envelope (midpoint)
+  combined_cycle_efficiency: 0.44 # 43.5–45.0%
   # Part-load efficiency multiplier: eta_eff = eta_cc * part_load_factor
-  part_load_floor_ratio: 0.30            # below 30% of net capacity, floor efficiency applied
-  part_load_floor_efficiency_factor: 0.80  # min 80% of eta_cc at very low load
+  part_load_floor_ratio: 0.30 # below 30% of net capacity, floor efficiency applied
+  part_load_floor_efficiency_factor: 0.80 # min 80% of eta_cc at very low load
   generation_voltage_kv: 6.6
-  step_up_voltage_kv: 33                 # TCN grid, grid-tied, 50 Hz
-  step_up_transformers_mva: 15           # 2x 15 MVA, 6.6/33 kV
+  step_up_voltage_kv: 33 # TCN grid, grid-tied, 50 Hz
+  step_up_transformers_mva: 15 # 2x 15 MVA, 6.6/33 kV
 
 engine:
   # Gas turbine (per unit) — CCGT top cycle
   model: "Kawasaki GPB80D (M7A-03D)"
-  simple_cycle_efficiency: 0.333         # 33.3–33.6%
+  simple_cycle_efficiency: 0.333 # 33.3–33.6%
   heat_rate_kj_per_kwh: 10820
   exhaust_mass_flow_kg_per_s: 27.11
   exhaust_temp_c: 526
-  dle_nox_ppm: 15                        # dry low emissions cap
-  availability: 0.95                     # WORKING — per-GT, swept in sensitivity
-  forced_outage_rate: 0.05               # WORKING — per-GT, swept in sensitivity
-  planned_outage_hours: 168              # WORKING — one scheduled full-plant week/yr
-  outage_seed: 2026                      # deterministic outage mask (reproducible)
+  dle_nox_ppm: 15 # dry low emissions cap
+  availability: 0.95 # WORKING — per-GT, swept in sensitivity
+  forced_outage_rate: 0.05 # WORKING — per-GT, swept in sensitivity
+  planned_outage_hours: 168 # WORKING — one scheduled full-plant week/yr
+  outage_seed: 2026 # deterministic outage mask (reproducible)
 
 steam_turbine:
   model: "Siemens SST-200 condensing"
   power_range_mw: [4, 20]
-  inlet_pressure_bar: 38                 # 35–45 window; HRSG design point 3.8 MPa
-  inlet_temp_c: 420                      # 400–450 window
-  steam_flow_t_per_h: 34.0               # 34–40 t/h yield @ design point
+  inlet_pressure_bar: 38 # 35–45 window; HRSG design point 3.8 MPa
+  inlet_temp_c: 420 # 400–450 window
+  steam_flow_t_per_h: 34.0 # 34–40 t/h yield @ design point
   rankine_cycle_efficiency: 0.28
   condenser: "closed-loop surface condenser, water- or air-cooled"
 
 hrsg:
   type: "dual-inlet, single-pressure, unfired"
-  exhaust_combined_kg_per_s: 54.22       # 2 x 27.11
+  exhaust_combined_kg_per_s: 54.22 # 2 x 27.11
   steam_flow_range_t_per_h: [34.0, 40.0]
   superheat_target_c: [380, 420]
   pinch_delta_c: [10, 15]
-  stack_temp_c: 140                      # acid dew-point floor
-  thermal_recovery_efficiency: 0.83      # ~82–85%
+  stack_temp_c: 140 # acid dew-point floor
+  thermal_recovery_efficiency: 0.83 # ~82–85%
 
 fuel:
   # CNG trucked "virtual pipeline" — 2 pressure-equalized vessels, ~250 bar.
   type: "CNG"
   lhv_mj_per_nm3: 35.9
   density_kg_per_nm3: 0.717
-  flow_nm3_per_h: 4623                   # ~4,623 Nm3/h @ design point
-  flow_kg_per_h: 3315                    # ~3.3 t/h
-  energy_mmbtu_per_h: 157.3              # 2 x ~78.66 MMBtu/h at full CCGT output
-  price_usd_per_mmbtu: 8.0               # WORKING — DELIVERED, incl. CNG compression/trucking
-  price_escalation_pct_per_yr: 2.0       # WORKING — real-terms escalation placeholder
+  flow_nm3_per_h: 4623 # ~4,623 Nm3/h @ design point
+  flow_kg_per_h: 3315 # ~3.3 t/h
+  energy_mmbtu_per_h: 157.3 # 2 x ~78.66 MMBtu/h at full CCGT output
+  price_usd_per_mmbtu: 8.0 # WORKING — DELIVERED, incl. CNG compression/trucking
+  price_escalation_pct_per_yr: 2.0 # WORKING — real-terms escalation placeholder
 
 capex:
   # Engineering build-up register (WORKING). Costs are lump-sum/unit economics for a
@@ -123,10 +123,10 @@ capex:
   #   total ~= USD 29.5M ; specific ~= USD 1,470/kW gross (typical for small CCGT + CNG station)
 
 opex:
-  fixed_om_usd_per_kw_yr: 22.0            # WORKING — $15–25/kW-yr small CCGT
-  variable_om_usd_per_mwh: 8.0            # WORKING — $5–12/MWh
-  om_escalation_pct_per_yr: 2.0           # WORKING
-  insurance_pct_of_capex_per_yr: 1.0      # WORKING
+  fixed_om_usd_per_kw_yr: 22.0 # WORKING — $15–25/kW-yr small CCGT
+  variable_om_usd_per_mwh: 8.0 # WORKING — $5–12/MWh
+  om_escalation_pct_per_yr: 2.0 # WORKING
+  insurance_pct_of_capex_per_yr: 1.0 # WORKING
   # Fuel logistics (CNG compression + trucking) is INSIDE fuel.price_usd_per_mmbtu.
   # No separate logistics line — avoids double counting.
 
@@ -136,7 +136,7 @@ data_center:
   alternate_load_scenarios: ["ai_heavy", "cloud_heavy"]
   it_capacity_mw: 12.0
   facility_capacity_mw: 15.0
-  target_pue: 1.25                       # tropical, hybrid liquid cooling
+  target_pue: 1.25 # tropical, hybrid liquid cooling
   deployment_phases_mw: [10, 15, 20]
   phase_profiles_dir: "data/load_profiles"
 
@@ -163,27 +163,27 @@ dc_ramp:
     pue: 1.20
 
 ppa:
-  energy_price_usd_per_kwh: 0.15         # WORKING — data-center BTM tariff
-  export_price_usd_per_kwh: 0.07        # WORKING — wholesale/TCN offtake of surplus
-  import_price_usd_per_kwh: 0.10        # WORKING — grid purchases (P3 peak hours only)
+  energy_price_usd_per_kwh: 0.15 # WORKING — data-center BTM tariff
+  export_price_usd_per_kwh: 0.07 # WORKING — wholesale/TCN offtake of surplus
+  import_price_usd_per_kwh: 0.10 # WORKING — grid purchases (P3 peak hours only)
   capacity_payment_usd_per_month: 20000 # WORKING
-  escalation_pct_per_yr: 2.0            # WORKING
-  contract_years: 20                    # typical independent-power tenor
+  escalation_pct_per_yr: 2.0 # WORKING
+  contract_years: 20 # typical independent-power tenor
   structure: "energy + capacity payments, grid-tied export of surplus"
-  dispatch_mode: "max_export"           # base case: run at full net, export surplus
+  dispatch_mode: "max_export" # base case: run at full net, export surplus
   # alternate dispatch_mode: "load_following" (no export; generate just to load) — sensitivity
 
 financing:
-  debt_share: 0.70                       # WORKING — 70/30 debt/equity
-  debt_interest_pct: 8.0                 # WORKING
-  debt_tenor_years: 15                   # WORKING
-  equity_hurdle_pct: 12.0                # WORKING
-  inflation_pct: 3.0                     # WORKING
-  discount_rate_pct: 10.0                # WORKING — project WACC placeholder
+  debt_share: 0.70 # WORKING — 70/30 debt/equity
+  debt_interest_pct: 8.0 # WORKING
+  debt_tenor_years: 15 # WORKING
+  equity_hurdle_pct: 12.0 # WORKING
+  inflation_pct: 3.0 # WORKING
+  discount_rate_pct: 10.0 # WORKING — project WACC placeholder
 
 tax:
-  corporate_rate: 0.30                   # WORKING — Nigerian corporate income
-  depreciation_years: 20                 # straight line, plant & equipment
+  corporate_rate: 0.30 # WORKING — Nigerian corporate income
+  depreciation_years: 20 # straight line, plant & equipment
   salvage_value_ratio: 0.0
 
 # RETIRED placeholders (were illustrative in the original scaffold — DO NOT use):

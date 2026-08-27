@@ -1,4 +1,5 @@
 """Physical 2x1 CCGT model: hourly generation, fuel consumption, grid balance."""
+
 from __future__ import annotations
 
 import numpy as np
@@ -7,11 +8,15 @@ MMBTU_PER_MWH = 3.412
 MJ_PER_MMBTU = 1055.06
 
 
-def part_load_efficiency_factor(sched_mw, rated_net_mw, floor_ratio=0.30, floor_factor=0.80):
+def part_load_efficiency_factor(
+    sched_mw, rated_net_mw, floor_ratio=0.30, floor_factor=0.80
+):
     """Linear efficiency ramp from floor -> full between 30% and 70% of net rating."""
     pl = np.asarray(sched_mw, dtype=float) / rated_net_mw
     slope = (1.0 - floor_factor) / (0.70 - floor_ratio)
-    factor = np.where(pl >= 0.70, 1.0, floor_factor + np.clip(pl - floor_ratio, 0, None) * slope)
+    factor = np.where(
+        pl >= 0.70, 1.0, floor_factor + np.clip(pl - floor_ratio, 0, None) * slope
+    )
     return np.where(pl <= floor_ratio, floor_factor, factor)
 
 
@@ -73,7 +78,10 @@ def run_hourly(cfg, load_mw, gt_on, dispatch_mode="max_export"):
         export_mw = np.zeros_like(sched_mw)
 
     eff_factor = part_load_efficiency_factor(
-        sched_mw, pl["net_capacity_mw"], floor_ratio=floor_ratio, floor_factor=floor_factor
+        sched_mw,
+        pl["net_capacity_mw"],
+        floor_ratio=floor_ratio,
+        floor_factor=floor_factor,
     )
     mwh = sched_mw / 1.0  # hourly = MWh
     fuel_mmbtu = cc_fuel_mmbtu(mwh, eta_cc, eff_factor)

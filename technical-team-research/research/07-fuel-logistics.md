@@ -17,19 +17,21 @@ schedule — circumventing physical pipeline right-of-way development delays and
 ## Fuel Consumption Calculations
 
 Design basis: natural gas LHV = **35.9 MJ/Nm³** at standard conditions.
-*(Kawasaki's own rating basis; heat rate 10,820–10,880 kJ/kWh for M7A-03D.)*
+_(Kawasaki's own rating basis; heat rate 10,820–10,880 kJ/kWh for M7A-03D.)_
 
 **Per unit (at 7,670 kW):**
+
 - Hourly energy input: 7,670 kW × 10,820 kJ/kWh = 82,989,400 kJ/hr (~78.66 MMBtu/hr)
 - Volumetric flow: 82,989,400 ÷ 35,900 kJ/Nm³ ≈ **2,311.68 Nm³/hr**
 
 **Combined site (dual units):**
+
 - **4,623.36 Nm³/hr**
 - Mass equivalent (ρ ≈ 0.717 kg/Nm³): **~3,315 kg/hr (~3.3 t/hr)**
 
-*(First-pass verification from chat: ~4,848 Nm³/hr using 8,000 kW & 10,880 kJ/kWh heat rate. Use the
+_(First-pass verification from chat: ~4,848 Nm³/hr using 8,000 kW & 10,880 kJ/kWh heat rate. Use the
 factor-verified 4,623 Nm³/hr for design basis; ambient temp, altitude, part-load, and gas quality
-shift actual consumption.)*
+shift actual consumption.)_
 
 ## Storage & Receipt Architecture
 
@@ -53,6 +55,7 @@ shift actual consumption.)*
 ```
 
 ### Operating logic
+
 - **Offloading:** truck discharge at high pressure (~250 bar) through a single localized
   refilling/truck offload station into the two storage vessels.
 - **Balanced drawdown/fill:** the two tanks are interconnected via a differential-pressure control
@@ -76,4 +79,5 @@ Fully closed cycle: treated water, HP feed injection, steam expansion, condenser
 
 ---
 
-*Sources: Gemini export 6_39_44 §5; fuel-thread verification in `New Microsoft Word Document.docx`; plant_layout.docx (fuel train).*
+_Sources: Gemini export 6_39_44 §5; fuel-thread verification in `New Microsoft Word Document.docx`; plant_layout.docx (fuel train)._
+

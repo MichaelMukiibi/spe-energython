@@ -10,10 +10,10 @@
 
 ## Final Selection Summary
 
-| Machine | Generator | Specs |
-|---|---|---|
-| 2x Kawasaki GPB80D (gas turbine) | **BRUSH 4-Pole DG Series** synchronous turbogenerator | Air-cooled, salient-pole, brushless excitation; 1,500 rpm (50 Hz); 6.6 kV terminal; up to 15 kV; 10–65 MVA range |
-| 1x Siemens SST-200 (steam turbine) | **Marelli Motori MJH 710/900 High/Medium Voltage** synchronous generator | Natively wound 6.6 kV; 4-pole (1,500 rpm) or 6-pole (1,000 rpm); D-Vo digital AVR; up to 12,500 kVA |
+| Machine                            | Generator                                                                | Specs                                                                                                            |
+| ---------------------------------- | ------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------- |
+| 2x Kawasaki GPB80D (gas turbine)   | **BRUSH 4-Pole DG Series** synchronous turbogenerator                    | Air-cooled, salient-pole, brushless excitation; 1,500 rpm (50 Hz); 6.6 kV terminal; up to 15 kV; 10–65 MVA range |
+| 1x Siemens SST-200 (steam turbine) | **Marelli Motori MJH 710/900 High/Medium Voltage** synchronous generator | Natively wound 6.6 kV; 4-pole (1,500 rpm) or 6-pole (1,000 rpm); D-Vo digital AVR; up to 12,500 kVA              |
 
 > **Decision context:** the marine **Siemens Energy SGM (Shaft Generator Motor) series** was
 > originally under evaluation for the SST-200 but was **rejected** — it is designed for shipboard
@@ -29,6 +29,7 @@ interfaces; 750+ active installations globally (utilities, geothermal, heavy ind
 CHP).
 
 **Core specifications**
+
 - Output: 10–75 MVA (typically 10–55 MVA at 40°C reference)
 - Speed: 1,500 rpm (50 Hz) or 1,800 rpm (60 Hz)
 - Voltage: up to 15 kV
@@ -36,6 +37,7 @@ CHP).
 - Excitation: integrated brushless system (no carbon brushes / slip rings / commutators)
 
 **Design features**
+
 - One-piece forged rotor (de-gassed, vacuum-poured, stress-relieved alloy steel)
 - Mild-steel stator with laminated high-silicon electrical-steel core + radial ventilation ducts
 - Class F insulation, aramid-and-epoxy resin matrix on copper strip coils
@@ -53,6 +55,7 @@ High-efficiency industrial three-phase alternators for marine, oil & gas, hydrop
 cogeneration duty.
 
 **Key features**
+
 - Brushless self-excited system with AVR, voltage regulation within ±0.5%
 - Class H insulation with VPI resin treatment
 - Oversized bearings + dynamic balancing
@@ -60,11 +63,13 @@ cogeneration duty.
 - MJH 710/900 = the medium/high-voltage platform (voltage band 1,000–7,200 V includes 6.6 kV)
 
 **Voltage classes (Marelli range)**
+
 - LV: 380–1,000 V (400/440/480/690 V)
 - MV: 1,000–7,200 V (**3.3 kV and 6.6 kV** — our target) ← selected
 - HV: 7,200–15,000 V (11/13.8/15 kV)
 
 **Rating & compatibility with SST-200**
+
 - Range: 10 kVA up to 12,500 kVA (12.5 MVA)
 - SST-200 runs 4–20 MW; MJH 710/900 largest frames reach 12.5 MVA → matches lower-to-middle
   spectrum (~4–10 MW) of the SST-200 duty
@@ -83,4 +88,5 @@ cogeneration duty.
 
 ---
 
-*Sources: `BRUSH 4-Pole DG Range Overview.docx` (+ `(1)` near-duplicate, identical content); `why is the siemens energy SGM series...docx` (+ `(1)` duplicate); `tell me about the Marelli,Lorren synchronous generator.docx`; `what is the output voltage of the marelli motiri.docx`; `whats its rating and is it compatible with the siemens sst 200 steam turbine.docx`; `which marelli motori synchronous generator compatible with ghe siemens sst 200 steam turbine gives output voltage of 6.6kv.docx`; generator thread within `New Microsoft Word Document.docx`.*
+_Sources: `BRUSH 4-Pole DG Range Overview.docx` (+ `(1)` near-duplicate, identical content); `why is the siemens energy SGM series...docx` (+ `(1)` duplicate); `tell me about the Marelli,Lorren synchronous generator.docx`; `what is the output voltage of the marelli motiri.docx`; `whats its rating and is it compatible with the siemens sst 200 steam turbine.docx`; `which marelli motori synchronous generator compatible with ghe siemens sst 200 steam turbine gives output voltage of 6.6kv.docx`; generator thread within `New Microsoft Word Document.docx`._
+

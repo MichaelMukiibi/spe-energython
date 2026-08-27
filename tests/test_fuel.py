@@ -1,14 +1,15 @@
 """Fuel-conversion identity tests and design-point cross-checks."""
+
 import pytest
 
+from models.loader import load_baseline
 from models.physical.combined_cycle import (
-    MMBTU_PER_MWH,
     MJ_PER_MMBTU,
-    part_load_efficiency_factor,
+    MMBTU_PER_MWH,
     cc_fuel_mmbtu,
     cc_fuel_nm3,
+    part_load_efficiency_factor,
 )
-from models.loader import load_baseline
 
 
 def test_full_load_fuel_matches_research_design():
@@ -41,7 +42,12 @@ def test_unit_identity():
 def test_part_load_factor_ramp():
     assert part_load_efficiency_factor(19.6, 19.6) == pytest.approx(1.0)
     assert part_load_efficiency_factor(14.0, 19.6) == pytest.approx(1.0)  # >=70%
-    assert part_load_efficiency_factor(5.5, 19.6) == pytest.approx(0.80)  # ~28% -> floor
-    lo, hi = part_load_efficiency_factor(8.0, 19.6), part_load_efficiency_factor(11.0, 19.6)
+    assert part_load_efficiency_factor(5.5, 19.6) == pytest.approx(
+        0.80
+    )  # ~28% -> floor
+    lo, hi = (
+        part_load_efficiency_factor(8.0, 19.6),
+        part_load_efficiency_factor(11.0, 19.6),
+    )
     assert lo < hi  # monotonic up
     assert 0.8 <= lo <= 1.0
