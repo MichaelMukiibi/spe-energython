@@ -1,0 +1,9 @@
+item,description,basis,cost_usd,share_pct
+gt_packages,"2x Kawasaki GPB80D power packages (enclosure, auxiliaries)",2 x ~$850/kW @ 7.67 MW,13000000.0,44.082739911834516
+hrsg,"Dual-inlet, single-pressure unfired HRSG (~34 t/h steam class)","lump sum, medium-class HRSG",3200000.0,10.851135978297728
+steam_turbine_system,"Siemens SST-200 + condenser, feedwater & balance of steam plant",4-20 MW class steam turbine system,3100000.0,10.512037978975924
+cng_station,"2x 250-bar CNG vessels, pressure-reduction skid, offload rack","virtual-pipeline station, compressor-backed",2200000.0,7.4601559850796875
+electrical,"2x 15 MVA 6.6/33 kV transformers, 6.6 kV switchgear, aux feeds",MV plant electrical package,1500000.0,5.0864699898270604
+civil_bop,"Civil works, closed-loop water/steam BOP, metering, yard",small-CCGT balance of plant,2800000.0,9.494743981010512
+epc_owners,"EPC/A, project management, owners costs, IDC proxy",~9% of equipment+BOP subtotal,2400000.0,8.138351983723297
+contingency,Design/contingency reserve,5% of equipment+BOP subtotal,1290000.0,4.374364191251272
