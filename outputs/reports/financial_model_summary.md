@@ -20,7 +20,7 @@
 
 | Metric | Year 1 (P1) | Year 6 (P2) | Year 15 (P3) |
 |---|---|---|---|
-| Facility load (avg, MW) | 9.0 | | |
+| Facility load (avg, MW) | 9.0 | 13.5 | 18.1 |
 | Generated MWh | 159,669 | 160,003 | 159,750 |
 | DC-served MWh | 77,310 | 112,941 | 147,635 |
 | Exported MWh | 82,358 | 47,062 | 12,115 |

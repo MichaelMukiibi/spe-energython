@@ -1,10 +1,13 @@
 # Environment
 .env
 
+# Python bytecode
+__pycache__/
+*.py[cod]
+
 # Large reference PDFs (>= 2 MB) — datasheets and brochures are re-downloadable from
 # vendor sites; keeping them out of git avoids bloating the repository.
 technical-team-research/assets/datasheets/04-siemens-gt-portfolio-brochure.pdf
 technical-team-research/assets/datasheets/05-siemens-ccpp-offshore-brochure.pdf
 technical-team-research/assets/datasheets/06-siemens-combined-cycle-web.pdf
-technical-team-research/archive/01-hydropower-plant-models.pdf__pycache__/
-*.py[cod]
+technical-team-research/archive/01-hydropower-plant-models.pdf

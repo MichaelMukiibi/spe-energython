@@ -159,7 +159,7 @@ def write_report(result):
     ap("")
     ap("| Metric | Year 1 (P1) | Year 6 (P2) | Year 15 (P3) |")
     ap("|---|---|---|---|")
-    ap(f"| Facility load (avg, MW) | {e.loc[1,'load_avg_mw']:.1f} | | |")
+    ap(f"| Facility load (avg, MW) | {e.loc[1,'load_avg_mw']:.1f} | {e.loc[6,'load_avg_mw']:.1f} | {e.loc[15,'load_avg_mw']:.1f} |")
     ap(f"| Generated MWh | {e.loc[1,'mwh']:,.0f} | {e.loc[6,'mwh']:,.0f} | {e.loc[15,'mwh']:,.0f} |")
     ap(f"| DC-served MWh | {e.loc[1,'dc_mwh']:,.0f} | {e.loc[6,'dc_mwh']:,.0f} | {e.loc[15,'dc_mwh']:,.0f} |")
     ap(f"| Exported MWh | {e.loc[1,'export_mwh']:,.0f} | {e.loc[6,'export_mwh']:,.0f} | {e.loc[15,'export_mwh']:,.0f} |")
