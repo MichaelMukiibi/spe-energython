@@ -41,6 +41,7 @@ engine:
   dle_nox_ppm: 15                        # dry low emissions cap
   availability: 0.95                     # WORKING — per-GT, swept in sensitivity
   forced_outage_rate: 0.05               # WORKING — per-GT, swept in sensitivity
+  planned_outage_hours: 168              # WORKING — one scheduled full-plant week/yr
   outage_seed: 2026                      # deterministic outage mask (reproducible)
 
 steam_turbine:
