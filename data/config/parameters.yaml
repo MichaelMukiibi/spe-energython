@@ -1,0 +1,117 @@
+# SPE AMTS Energython 2026 — Tunable Parameters
+# All domain values in one place. Edit here, not in source code.
+
+facility:
+  gross_generation_mw: 15.0
+  target_pue: 1.25
+  it_capacity_mw: 12.0  # derived: gross / pue (Phase 2 default)
+
+# 3-Phase Deployment Strategy
+# PUE improves with scale: chillers run closer to optimal load at higher utilization.
+# Zone deployment is strategic: cloud first (fastest revenue), AI immersion last (most expensive).
+phases:
+  phase_1:
+    name: "Initial Deployment"
+    gross_mw: 10.0
+    target_pue: 1.30
+    zones:
+      zone_a: { rack_count: 180, total_mw: 3.6 }
+      zone_b: { rack_count: 60, total_mw: 3.0 }
+      zone_c: { rack_count: 10, total_mw: 1.0 }
+  phase_2:
+    name: "Full Deployment"
+    gross_mw: 15.0
+    target_pue: 1.25
+    zones:
+      zone_a: { rack_count: 250, total_mw: 5.0 }
+      zone_b: { rack_count: 80, total_mw: 4.0 }
+      zone_c: { rack_count: 30, total_mw: 3.0 }
+  phase_3:
+    name: "Full Build-Out"
+    gross_mw: 20.0
+    target_pue: 1.20
+    zones:
+      zone_a: { rack_count: 330, total_mw: 6.6 }
+      zone_b: { rack_count: 120, total_mw: 6.0 }
+      zone_c: { rack_count: 40, total_mw: 4.0 }
+
+cooling:
+  target_pue_tropical: 1.25
+  hybrid_mix:
+    air_cooled_pct: 0.40
+    direct_to_chip_pct: 0.35
+    immersion_pct: 0.25
+
+zones:
+  zone_a:
+    name: "Standard Cloud"
+    workload: "Enterprise Cloud / SaaS"
+    rack_density_kw: 20
+    rack_count: 250
+    total_mw: 5.0
+    cooling: "Hot/Cold Aisle Containment + Chilled Water CRAC"
+  zone_b:
+    name: "High-Density HPC"
+    workload: "High-Performance Computing"
+    rack_density_kw: 50
+    rack_count: 80
+    total_mw: 4.0
+    cooling: "Direct-to-Chip (D2C) Cold Plate Liquid Cooling"
+  zone_c:
+    name: "AI Immersion"
+    workload: "AI LLM Training & Deep Learning"
+    rack_density_kw: 100
+    rack_count: 30
+    total_mw: 3.0
+    cooling: "Single-Phase / Two-Phase Immersion Cooling Tanks"
+
+power:
+  idle_power_ratio: 0.35  # 30-40% of peak, use 35% midpoint
+  gpu_idle_ratio: 0.35
+  cpu_idle_ratio: 0.30
+
+load_profiling:
+  hours_per_year: 8760
+  resolution_hours: 1
+  scenarios:
+    cloud_heavy:
+      description: "High variance, distinct day/night cycles"
+      peak_utilization: 0.95
+      offpeak_utilization: 0.45
+      diurnal_amplitude: 0.50
+      ai_batch_pct: 0.15
+    ai_heavy:
+      description: "High baseload, sustained peaks, minimal diurnal drop"
+      peak_utilization: 0.98
+      offpeak_utilization: 0.80
+      diurnal_amplitude: 0.10
+      ai_batch_pct: 0.70
+    mixed:
+      description: "Realistic hybrid — AI base + cloud diurnal spikes"
+      peak_utilization: 0.92
+      offpeak_utilization: 0.55
+      diurnal_amplitude: 0.30
+      ai_batch_pct: 0.40
+
+tropical_climate:
+  design_temp_c: 35
+  humidity_pct: 70
+  ambient_range_c: [25, 42]
+
+cooling_technologies:
+  legacy_dx:
+    name: "Legacy DX Air Cooling"
+    pue_range: [1.65, 1.80]
+    water_usage: "Low direct, high power draw"
+  chilled_water:
+    name: "Chilled Water + Evaporative Towers"
+    pue_range: [1.35, 1.45]
+    water_usage: "Severe evaporative loss"
+  direct_to_chip:
+    name: "Direct-to-Chip (D2C) Liquid"
+    pue_range: [1.18, 1.25]
+    water_usage: "Minimal closed-loop fluid loss"
+  immersion:
+    name: "Single-Phase Liquid Immersion"
+    pue_range: [1.08, 1.15]
+    water_usage: "Zero water loss (dielectric fluid)"
