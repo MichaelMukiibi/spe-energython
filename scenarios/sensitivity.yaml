@@ -1,0 +1,18 @@
+# Sensitivity scenario definition — overrides baselines.yaml per parameter.
+# Values below are the SWEEP RANGES the sensitivity model steps across, not point overrides.
+# Engineering params are LOCKED; only uncertain/financial params are swept.
+sensitivity:
+  fuel:
+    price_usd_per_mmbtu: [6.0, 7.0, 8.0, 9.0, 10.5]
+  ppa:
+    energy_price_usd_per_kwh: [0.12, 0.15, 0.18]
+    capacity_payment_usd_per_month: [15000, 20000, 25000]
+  plant:
+    availability: [0.90, 0.93, 0.95, 0.97]
+    forced_outage_rate: [0.03, 0.05, 0.08]
+  financing:
+    debt_share: [0.60, 0.70, 0.80]
+    debt_interest_pct: [7.0, 8.0, 9.0]
+    discount_rate_pct: [8.0, 10.0, 12.0]
+  data_center:
+    load_profile: ["mixed", "ai_heavy", "cloud_heavy"]

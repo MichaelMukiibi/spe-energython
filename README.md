@@ -11,40 +11,47 @@ The project approaches the challenge as an integrated **physical system + operat
 Our modeling pipeline is:
 
 ```text
-Natural Gas
+Natural Gas (CNG virtual pipeline)
      │
      ▼
-Gas Engines
+2x Gas Turbines (Kawasaki GPB80D)
      │
-     ├──────────────► Electricity ──────────► Data Center
+     ├──────────────────────► Electricity (15.34 MWe)
+     │                              │
+     │                              ▼
+     │                       Data Center (facility load)
+     ▼
+   Exhaust (526°C)
      │
      ▼
- Waste Heat
+    HRSG (steam 34 t/h @ 3.8 MPa)
      │
      ▼
-Heat Recovery
+   Steam Turbine (Siemens SST-200)
      │
+     ├──────────────────────► Electricity (4.72 MWe)
+     │                              │
+     │                              ▼
+     │                    Data Center / Grid export
      ▼
-Absorption Chilling
-     │
-     ▼
- Data Center Cooling
-
+   Surplus to TCN 33 kV Grid (grid-tied export)
           ↓
-   Operational Model
-          ↓
- Reliability / Dispatch
+   Operational Model (dispatch / availability)
           ↓
      PPA Revenue
           ↓
    CAPEX + OPEX
           ↓
-  Project Cash Flows
+   Project Cash Flows
           ↓
-      NPV / IRR
+       NPV / IRR
 ```
 
-The objective is to determine whether a natural-gas-based generation system can provide **reliable, economically competitive and technically viable power** for a large data-center load while exploiting opportunities for combined heat and power (CHP).
+The objective is to determine whether a natural-gas-based **combined-cycle** generation system can
+provide **reliable, economically competitive and technically viable power** for a large data-center
+load. Waste heat is converted into **additional electricity** via a steam bottoming cycle (CCGT) —
+not into cooling. Data-center cooling electricity is represented directly through the facility's
+PUE (1.25 tropical target).
 
 ---
 
@@ -53,15 +60,14 @@ The objective is to determine whether a natural-gas-based generation system can 
 The model is designed to answer:
 
 * What generation configuration is technically appropriate for a 10–20 MW data center?
-* How much natural gas is required?
-* How does engine efficiency change with load?
-* How much waste heat is available?
-* How much of that heat can be recovered?
-* Can recovered heat meaningfully reduce cooling electricity demand?
-* What N+1 configuration provides adequate reliability?
+* How much natural gas is required (CNG truck-delivered)?
+* How does combined-cycle efficiency change with load?
+* How much electricity does the steam bottoming cycle add from turbine exhaust?
+* What N+1 reliability does the 2x1 GT+ST configuration provide?
 * How do planned and forced outages affect delivered energy?
 * What are the CAPEX and OPEX requirements?
 * How should the PPA structure electricity and capacity revenue?
+* How does grid-tied export of surplus generation contribute to revenue?
 * What are the project's NPV and IRR?
 * Which assumptions have the greatest effect on project viability?
 * What operating and system configuration maximizes project value?
@@ -74,18 +80,17 @@ The project is divided into several interconnected layers.
 
 ### 1. Physical Model
 
-Models the behavior of the generation and cooling systems.
+Models the CCGT generation system.
 
 Key variables include:
 
-* Engine capacity
-* Electrical efficiency
-* Fuel consumption
+* Gas turbine capacity and simple-cycle efficiency (heat rate)
+* Combined-cycle configuration (2x GT + 1x ST via HRSG)
+* Fuel consumption (CNG, Nm³/h and kg/h)
+* Tesla exhaust temperature and mass flow
+* HRSG steam yield and steam-turbine output
 * Load
-* Waste heat
-* Heat recovery
-* Chiller COP
-* Cooling demand
+* Grid export
 
 ### 2. Operational Model
 
@@ -93,24 +98,25 @@ Determines how the plant operates under changing conditions.
 
 This includes:
 
-* Engine dispatch
+* GT/ST dispatch
 * Part-load operation
 * Engine availability
 * Planned maintenance
 * Forced outages
-* N+1 redundancy
+* N+1 redundancy (2x GT + 1x ST)
 * Grid backup
 * Reserve capacity
+* CNG fuel-supply reliability
 
 ### 3. Revenue Model
 
 Translates physical output into project revenue.
 
-Potential revenue streams include:
+Revenue streams:
 
-* Energy payments
+* Energy payments (data center + grid export)
 * Capacity payments
-* Other contractual services
+* Grid export of surplus power
 
 ### 4. Financial Model
 
@@ -134,21 +140,21 @@ Tests how project viability changes under different assumptions.
 
 Examples:
 
-* Natural-gas price
+* Natural-gas price (CNG delivered $/MMBtu)
 * Electricity/PPA price
-* Engine efficiency
+* Combined-cycle efficiency
 * Engine configuration
 * CAPEX
 * Availability
-* Cooling assumptions
 * Financing conditions
+* Load profile scenario (mixed / AI-heavy / cloud-heavy)
 
 ---
 
 # Repository Structure
 
 ```text
-amts-energython-africa-2026/
+spe-energython/
 │
 ├── README.md
 ├── LICENSE
@@ -156,20 +162,25 @@ amts-energython-africa-2026/
 ├── requirements.txt
 │
 ├── research/
-│   ├── engineering_checkpoints.md
+│   ├── engineering_checkpoints.md        # resolved engineering decisions (CLOSED)
 │   ├── literature_review.md
-│   └── sources.md
+│   ├── sources.md
+│   └── technical-team-research/          # consolidated design research (CS#1)
+│       ├── research/                     # merged markdown docs 00–08
+│       ├── assets/                       # datasheets, images, plant layout
+│       └── archive/
 │
 ├── docs/
-│   ├── challenge.md
-│   ├── system_architecture.md
-│   ├── modeling_methodology.md
-│   ├── assumptions.md
-│   └── validation.md
+│   ├── 01_challenge.md
+│   ├── 02_system_architecture.md
+│   ├── 03_modeling_methodology.md
+│   ├── 04_assumptions.md
+│   ├── 05_validation.md
+│   └── cs1_data_center/                  # CS#1 specs: sizing, PUE, load profiling
 │
 ├── data/
-│   ├── raw/
-│   ├── processed/
+│   ├── load_profiles/                    # 8760-hr CSVs (3 scenarios x 3 phases)
+│   ├── config/parameters.yaml            # CS#1 data center config
 │   └── README.md
 │
 ├── models/
@@ -177,7 +188,7 @@ amts-energython-africa-2026/
 │   │   ├── engine.py
 │   │   ├── fuel.py
 │   │   ├── heat_recovery.py
-│   │   ├── cooling.py
+│   │   ├── combined_cycle.py
 │   │   └── plant.py
 │   │
 │   ├── operational/
@@ -195,7 +206,7 @@ amts-energython-africa-2026/
 │       └── returns.py
 │
 ├── scenarios/
-│   ├── baseline.yaml
+│   ├── baselines.yaml                    # CANONICAL — locked engineering + working financials
 │   ├── high_gas_price.yaml
 │   ├── low_gas_price.yaml
 │   └── sensitivity.yaml
@@ -221,75 +232,62 @@ amts-energython-africa-2026/
 
 ---
 
-# Research Workflow
+# Research Status
 
-Engineering assumptions are developed through a structured research process.
+🚧 **Research phase CLOSED — moving to model build.**
 
-```text
-Research Question
-       ↓
-Engineering Discussion
-       ↓
-Literature / Industry Data
-       ↓
-Technical Assumption
-       ↓
-Model Parameter
-       ↓
-Simulation
-       ↓
-Validation
-       ↓
-Financial Impact
-```
+The engineering configuration is **locked**:
 
-The `research/engineering_checkpoints.md` document records the technical questions that need to be resolved with input from the:
+* 2x1 CCGT: 2x Kawasaki GPB80D gas turbines (15.34 MWe) + 1x Siemens SST-200 condensing steam
+  turbine (4.72 MWe) = 20.06 MWe gross / ~19.60 MWe net
+* Combined-cycle efficiency: 43.5–45.0%
+* Fuel: CNG truck-delivered "virtual pipeline", ~4,623 Nm³/h (~157 MMBtu/h)
+* Electrical: 6.6 kV generation → 2x 15 MVA transformers → TCN 33 kV, grid-tied
+* Data center: 10–20 MW (CS#1 8760-hr load profiles), PUE 1.25 tropical
 
-* Petroleum Engineering team
-* Mechanical Engineering team
-* Electrical Engineering team
-
-Each major assumption should eventually have a traceable source and justification.
+See `research/technical-team-research/research/` for the full consolidated design record, and
+`scenarios/baselines.yaml` for the canonical model parameter file.
 
 ---
 
 # Assumptions
 
-We aim to avoid hard-coding arbitrary assumptions directly into model logic.
+Assumptions are **not hard-coded** into model logic — they are stored in `scenarios/*.yaml`.
 
-Scenario assumptions will be stored separately, for example:
+The canonical baseline is `scenarios/baselines.yaml`. Key values:
 
 ```yaml
 plant:
-  engine_count: 5
-  engine_capacity_mw: 3
-  target_load_mw: 10
+  gas_turbine_count: 2
+  gas_turbine_capacity_mw: 7.67
+  steam_turbine_capacity_mw: 4.72
+  net_capacity_mw: 19.60
+  combined_cycle_efficiency: 0.44
 
 engine:
-  electrical_efficiency: 0.40
   availability: 0.95
 
-gas:
-  price_usd_mmbtu: 8.0
+fuel:
+  price_usd_per_mmbtu: 8.0        # WORKING — delivered CNG
 
-cooling:
-  heat_recovery_efficiency: 0.60
-  absorption_chiller_cop: 0.70
+data_center:
+  baseline_load_profile: "mixed"
+  target_pue: 1.25
 
 ppa:
-  energy_price_usd_kwh: 0.15
-  capacity_payment_usd_month: 20000
+  energy_price_usd_per_kwh: 0.15  # WORKING
+  capacity_payment_usd_per_month: 20000  # WORKING
 ```
 
-**Values shown above are illustrative model-development assumptions and should not be treated as final project assumptions.**
-
-Final assumptions will be supported by engineering research, manufacturer data, market data, or clearly documented modeling assumptions.
+**Engineering values are locked from research. Financial values ($/MMBtu gas, PPA pricing,
+financing terms) are marked `WORKING` — they seed the build and are sensitivity-swept, since the
+research phase has closed.**
 
 ---
 
 # Key Engineering Relationships
 
-### Electrical generation
+### Electrical generation (CCGT)
 
 [
 E_{electric}=P_{electric}\times t
@@ -298,27 +296,30 @@ E_{electric}=P_{electric}\times t
 ### Fuel requirement
 
 [
-E_{fuel}=\frac{E_{electric}}{\eta_e}
+E_{fuel}=\frac{E_{electric}}{\eta_{cc}}
 ]
 
-### Waste heat
-
-A simplified representation:
-
+where combined-cycle efficiency
 [
-Q_{waste}=E_{fuel}-E_{electric}
+\eta_{cc}\approx 0.435\text{--}0.45
 ]
 
-### Recoverable heat
+### Gas turbine exhaust → HRSG steam
 
 [
-Q_{recovered}=Q_{waste}\times\eta_{recovery}
+\dot m_{steam}=f(\dot m_{exhaust},T_{exhaust})
 ]
 
-### Cooling from absorption chiller
+### Steam turbine output (bottoming cycle)
 
 [
-Q_{cooling}=Q_{recovered}\times COP
+P_{ST}=\dot m_{steam}\times \Delta h \times \eta_{Rankine}
+]
+
+### Grid export
+
+[
+E_{export}=E_{generated}-E_{data\ center\ load}
 ]
 
 ### Gas cost
@@ -345,113 +346,47 @@ PV_t=\frac{CF_t}{(1+r)^t}
 NPV=-CAPEX+\sum_{t=1}^{T}\frac{CF_t}{(1+r)^t}
 ]
 
-These relationships will become progressively more detailed as the physical and financial models are developed.
-
 ---
 
 # Model Development Principles
 
 ### 1. Physics before finance
 
-Financial outputs should be downstream of the physical system.
+Financial outputs are downstream of the physical system:
 
-We should first establish:
-
-> What does the plant physically do?
-
-Then:
-
-> How does it operate?
-
-Then:
-
-> What does that operation cost and produce?
-
-Finally:
-
-> Is the resulting project financially viable?
+> What does the plant physically do? → How does it operate? → What does that operation cost and
+> produce? → Is the resulting project financially viable?
 
 ### 2. Separate assumptions from model logic
 
-Technical assumptions should be configurable rather than embedded directly in Python code.
+Technical assumptions are configurable via `scenarios/*.yaml`, not embedded in Python.
 
 ### 3. Make assumptions traceable
 
-Every major parameter should have:
-
-* Value
-* Unit
-* Source
-* Rationale
-* Confidence level
+Every major parameter should have: value, unit, source, rationale, confidence level.
+(Engineering values are locked and sourced; financial values are `WORKING`.)
 
 ### 4. Validate before optimizing
 
-We should first ensure that the physical and financial models behave correctly before attempting optimization.
+Ensure physical and financial models behave correctly before attempting optimization.
 
 ### 5. Test edge cases
 
-Examples include:
-
-* Full load
-* Part load
-* Engine outage
-* Multiple engine outages
-* Maintenance periods
-* Gas supply interruption
-* Grid backup
-* High gas prices
-* Low electricity prices
-
----
-
-# Current Status
-
-🚧 **Early-stage modeling**
-
-Current work is focused on:
-
-* Understanding the challenge requirements
-* Developing the physical system model
-* Identifying engineering assumptions
-* Establishing the reliability model
-* Defining the PPA/revenue structure
-* Designing the project-finance model
-* Building the computational architecture
-
-The baseline scenario and final technical assumptions are still under development.
-
----
-
-# Team Contributions
-
-The project brings together complementary engineering and computational perspectives.
-
-| Area                    | Primary Focus                                               |
-| ----------------------- | ----------------------------------------------------------- |
-| Petroleum Engineering   | Natural gas supply, gas quality, fuel economics             |
-| Mechanical Engineering  | Engines, thermodynamics, heat recovery, cooling             |
-| Electrical Engineering  | Generation, dispatch, grid integration, reliability         |
-| Computational / Finance | Simulation, optimization, techno-economics, project finance |
-
-The final model should integrate these domains rather than treating them as independent analyses.
+Examples: full load, part load, GT outage, HRSG/ST trip, maintenance periods, gas-supply
+interruption, grid export/import, high/low gas prices, high/low electricity prices.
 
 ---
 
 # Reproducibility
 
-The goal is for the final results to be reproducible from the documented assumptions and source data.
-
-Once the model is implemented, the expected workflow will be:
-
 ```bash
 git clone <repository-url>
-cd amts-energython-africa-2026
+cd spe-energython
 
 pip install -r requirements.txt
 
-python -m models.physical.plant
-python -m analysis.results
+python -m models.physical.plant --scenario baselines
+python -m analysis.results --scenario baselines
 ```
 
 Exact commands will be updated as the implementation stabilizes.
@@ -460,6 +395,4 @@ Exact commands will be updated as the implementation stabilizes.
 
 # Disclaimer
 
-This repository is an analytical and modeling project developed for the **AMTS Energython Africa 2026** challenge.
-
-Early-stage assumptions are illustrative and should not be interpreted as engineering, financial, or investment advice. Final technical and financial conclusions will depend on validated engineering data, site-specific conditions, contractual terms, and market information.
+This repository is an analytical and modeling project developed for the **AMTS Energython Africa 2026** challenge. Financial parameters are working assumptions for a competition submission and should not be interpreted as engineering, financial, or investment advice.
