@@ -1,0 +1,1 @@
+"""SPE Energython 2026 techno-economic model package."""
