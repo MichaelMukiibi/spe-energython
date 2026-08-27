@@ -68,6 +68,7 @@ def run_project(cfg, load_scenario=None, dispatch_mode=None, capex_multiplier=1.
             "dc_mwh": float(np.sum(np.minimum(t["sched_mw"], t["load_mw"]))),
             "export_mwh": float(np.sum(t["export_mw"])),
             "import_mwh": float(np.sum(t["import_mw"])),
+            "load_avg_mw": float(np.mean(t["load_mw"])),
             "fuel_mmbtu": float(np.sum(t["fuel_mmbtu"])),
             "fuel_nm3": float(np.sum(t["fuel_nm3"])),
             "fuel_kg": float(np.sum(t["fuel_kg"])),
