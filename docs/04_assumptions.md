@@ -75,8 +75,37 @@ Legend: 🔒 = locked (research-backed) · ⚠️ = working assumption (sensitiv
 | Inflation | **3.0** | %/yr | Working | ⚠️ Low |
 | Discount rate | **10.0** | %/yr | Working — project WACC | ⚠️ Low |
 
-> CAPEX ($/kW for turbines, HRSG, CNG station, BOP) is the **next build step**; it is intentionally
-> deferred to the CAPEX module rather than hard-coded here.
+## CAPEX register (engineering build-up, WORKING)
+
+Itemized in `scenarios/baselines.yaml` `capex.items` — expected **≈ USD 29.5M ≈ $1,470/kW gross**
+for the ~20 MWe CCGT + CNG station. Swept ±20% (`capex.multiplier`); largest single line is the 2x
+GT packages (~$13M). [⚠️ Low confidence — biggest remaining model input.]
+
+## OPEX
+
+| Parameter | Value | Unit | Confidence |
+|---|---|---|---|
+| Fixed O&M | 22.0 | USD/kW-yr (net) | ⚠️ Low |
+| Variable O&M | 8.0 | USD/MWh | ⚠️ Low |
+| O&M escalation | 2.0 | %/yr | ⚠️ Low |
+| Insurance | 1.0 | % CAPEX/yr | ⚠️ Low |
+| CNG logistics | inside fuel price | $/MMBtu delivered | 🔒 model structure |
+
+## PPA & grid (additions)
+
+| Parameter | Value | Unit | Source | Confidence |
+|---|---|---|---|---|
+| Export price (surplus to TCN) | **0.07** | USD/kWh | Working — wholesale offtake | ⚠️ Low |
+| Import price (P3 peak top-up) | **0.10** | USD/kWh | Working — grid purchases | ⚠️ Low |
+| Dispatch mode | max_export | — | Base case; load_following = sensitivity | ⚠️ Medium |
+| DC ramp | P1 10 MW yrs 1–2 → P2 15 MW yrs 3–6 → P3 20 MW yrs 7–20 | — | `dc_ramp` | 🔒 High |
+
+## Tax
+
+| Parameter | Value | Unit | Confidence |
+|---|---|---|---|
+| Corporate rate | 30 | % | ⚠️ Medium |
+| Depreciation | 20-yr straight line, 0 salvage | — | ⚠️ Medium |
 
 ## Retired placeholder (DO NOT reuse)
 
