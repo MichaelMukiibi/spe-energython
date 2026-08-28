@@ -14,12 +14,12 @@ using a **natural gas-fired power plant** (or fuel of choice).
 
 ## Scoring Weights (Finals = "Shark Pitch")
 
-| Criterion | Weight |
-|---|---|
-| Innovation | 20% |
-| Technical rigor | 25% |
-| Financial model | 25% |
-| Presentation | 30% |
+| Criterion       | Weight |
+| --------------- | ------ |
+| Innovation      | 20%    |
+| Technical rigor | 25%    |
+| Financial model | 25%    |
+| Presentation    | 30%    |
 
 > Presentation is the single heaviest criterion (30%) — the finals are a live pitch.
 
@@ -33,4 +33,5 @@ using a **natural gas-fired power plant** (or fuel of choice).
 
 ---
 
-*Sources: competition flyer (assets/images/01-competition-flyer.jpeg); team briefing.*
+_Sources: competition flyer (assets/images/01-competition-flyer.jpeg); team briefing._
+

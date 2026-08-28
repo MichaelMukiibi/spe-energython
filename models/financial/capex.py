@@ -1,4 +1,5 @@
 """CAPEX build-up from the engineering register in scenarios/baselines.yaml."""
+
 from __future__ import annotations
 
 import pandas as pd

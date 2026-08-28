@@ -12,18 +12,18 @@ the system's thermal constraints.
 ## Step 1 — Combining the Exhaust Streams
 
 - **Combined mass flow:** m_gas,total = m_GT1 + m_GT2 = 97,600 + 97,600 = **195,200 kg/hr** (~54.22 kg/s)
-  *(the modeling doc used 195,000 kg/hr / 54.17 kg/s; the datasheet-based figure is 195,200 kg/hr)*
+  _(the modeling doc used 195,000 kg/hr / 54.17 kg/s; the datasheet-based figure is 195,200 kg/hr)_
 - **Mixed exhaust temperature:** both turbines run at identical load → combined inlet = individual
   outlet = **526°C**. If loads differ, use mass-weighted average:
   T_mix = (m₁·T₁ + m₂·T₂) / (m₁ + m₂)
 
 ## Step 2 — The 3 Core Modeling Constraints
 
-| Parameter | Recommended Value | Purpose in Model |
-|---|---|---|
-| Steam Turbine Inlet Pressure (P_s) | 35–45 bar | Fixes boiling point (T_sat) in the evaporator drum |
-| Superheat Temperature (T_s1) | 380–420°C | Selected 80–100°C below exhaust gas inlet (526°C) |
-| Pinch Point Difference (ΔT_pinch) | 10–15°C | Prevents temperature crossover in evaporator; controls total steam yield |
+| Parameter                          | Recommended Value | Purpose in Model                                                         |
+| ---------------------------------- | ----------------- | ------------------------------------------------------------------------ |
+| Steam Turbine Inlet Pressure (P_s) | 35–45 bar         | Fixes boiling point (T_sat) in the evaporator drum                       |
+| Superheat Temperature (T_s1)       | 380–420°C         | Selected 80–100°C below exhaust gas inlet (526°C)                        |
+| Pinch Point Difference (ΔT_pinch)  | 10–15°C           | Prevents temperature crossover in evaporator; controls total steam yield |
 
 Additional constraint: **stack outlet temperature > 140°C** to avoid acid condensation / corrosion
 of the carbon-steel stack (sulfur compounds in exhaust).
@@ -52,4 +52,5 @@ of the carbon-steel stack (sulfur compounds in exhaust).
 
 ---
 
-*Sources: `Uh so if we are finding out, if we have our condit.._.docx`; HRSG sections of both Gemini exports; 01-ccpp-design-report.md.*
+_Sources: `Uh so if we are finding out, if we have our condit.._.docx`; HRSG sections of both Gemini exports; 01-ccpp-design-report.md._
+

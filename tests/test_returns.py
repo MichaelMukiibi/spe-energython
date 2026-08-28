@@ -1,8 +1,9 @@
 """Closed-form checks for NPV/IRR/payback helpers."""
+
 import numpy as np
 import pytest
 
-from models.financial.returns import npv, irr, payback_years, cumulative_cashflow
+from models.financial.returns import cumulative_cashflow, irr, npv, payback_years
 
 
 def test_npv_closed_form():

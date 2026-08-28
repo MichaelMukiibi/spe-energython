@@ -9,13 +9,13 @@ ideal recommendation.
 
 ## SST Series Comparison
 
-| Feature / Spec | Siemens SST-200 | Siemens SST-400 | Siemens SST-600 |
-|---|---|---|---|
-| Power Range | 4 MW to 20 MW | 10 MW to 65 MW | 20 MW to 150 MW |
-| Max Live Steam Temp | 540°C | 540°C | 565°C |
+| Feature / Spec       | Siemens SST-200                      | Siemens SST-400             | Siemens SST-600                  |
+| -------------------- | ------------------------------------ | --------------------------- | -------------------------------- |
+| Power Range          | 4 MW to 20 MW                        | 10 MW to 65 MW              | 20 MW to 150 MW                  |
+| Max Live Steam Temp  | 540°C                                | 540°C                       | 565°C                            |
 | Footprint / Assembly | Compact, skid-mounted single package | Intermediate casing package | Large utility-scale installation |
-| Target Application | Small-scale CCGT & CHP | Medium industrial / Biomass | Large central power plants |
-| CapEx Fit (for 5 MW) | **Optimal** | Over-spec / High cost | Massive over-spec |
+| Target Application   | Small-scale CCGT & CHP               | Medium industrial / Biomass | Large central power plants       |
+| CapEx Fit (for 5 MW) | **Optimal**                          | Over-spec / High cost       | Massive over-spec                |
 
 ## Core Reasons to Select the SST-200
 
@@ -43,4 +43,5 @@ air-cooled surface condenser, configured for **~40–50 bar inlet pressure at 50
 
 ---
 
-*Sources: `So, which series do you recommend in particular un....docx`; `New Microsoft Word Document.docx` (verification notes).*
+_Sources: `So, which series do you recommend in particular un....docx`; `New Microsoft Word Document.docx` (verification notes)._
+

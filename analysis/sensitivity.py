@@ -1,5 +1,6 @@
 """Sensitivity analysis: NPV tornado + scenario comparison.
 Usage: python -m analysis.sensitivity"""
+
 from __future__ import annotations
 
 import argparse
@@ -13,23 +14,68 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-from models.loader import load_baseline, deep_merge
 from models.financial.project import run_project
+from models.loader import deep_merge, load_baseline
 
 OUT = Path(__file__).resolve().parent.parent / "outputs"
 
 # Each leg: label, dotted path into cfg (or "capex"), low/high override values.
 TORNADO_LEGS = [
-    {"label": "Gas price ($/MMBtu)", "path": ["fuel", "price_usd_per_mmbtu"], "low": 6.0, "high": 10.5},
-    {"label": "PPA energy price ($/kWh)", "path": ["ppa", "energy_price_usd_per_kwh"], "low": 0.12, "high": 0.18},
-    {"label": "Export price ($/kWh)", "path": ["ppa", "export_price_usd_per_kwh"], "low": 0.05, "high": 0.09},
-    {"label": "Capacity payment ($/mo)", "path": ["ppa", "capacity_payment_usd_per_month"], "low": 15000, "high": 25000},
+    {
+        "label": "Gas price ($/MMBtu)",
+        "path": ["fuel", "price_usd_per_mmbtu"],
+        "low": 6.0,
+        "high": 10.5,
+    },
+    {
+        "label": "PPA energy price ($/kWh)",
+        "path": ["ppa", "energy_price_usd_per_kwh"],
+        "low": 0.12,
+        "high": 0.18,
+    },
+    {
+        "label": "Export price ($/kWh)",
+        "path": ["ppa", "export_price_usd_per_kwh"],
+        "low": 0.05,
+        "high": 0.09,
+    },
+    {
+        "label": "Capacity payment ($/mo)",
+        "path": ["ppa", "capacity_payment_usd_per_month"],
+        "low": 15000,
+        "high": 25000,
+    },
     {"label": "CAPEX", "path": ["capex"], "low": 0.80, "high": 1.20},
-    {"label": "Forced-outage rate/GT", "path": ["engine", "forced_outage_rate"], "low": 0.03, "high": 0.08},
-    {"label": "Planned outage (h/yr)", "path": ["engine", "planned_outage_hours"], "low": 334, "high": 84},
-    {"label": "Discount rate (%)", "path": ["financing", "discount_rate_pct"], "low": 8.0, "high": 12.0},
-    {"label": "Debt interest (%)", "path": ["financing", "debt_interest_pct"], "low": 7.0, "high": 9.0},
-    {"label": "Corporate tax (%)", "path": ["tax", "corporate_rate"], "low": 0.25, "high": 0.35},
+    {
+        "label": "Forced-outage rate/GT",
+        "path": ["engine", "forced_outage_rate"],
+        "low": 0.03,
+        "high": 0.08,
+    },
+    {
+        "label": "Planned outage (h/yr)",
+        "path": ["engine", "planned_outage_hours"],
+        "low": 334,
+        "high": 84,
+    },
+    {
+        "label": "Discount rate (%)",
+        "path": ["financing", "discount_rate_pct"],
+        "low": 8.0,
+        "high": 12.0,
+    },
+    {
+        "label": "Debt interest (%)",
+        "path": ["financing", "debt_interest_pct"],
+        "low": 7.0,
+        "high": 9.0,
+    },
+    {
+        "label": "Corporate tax (%)",
+        "path": ["tax", "corporate_rate"],
+        "low": 0.25,
+        "high": 0.35,
+    },
 ]
 
 
@@ -86,10 +132,14 @@ def fig_tornado(base_npv, df):
     ax.set_yticks(y)
     ax.set_yticklabels(df["parameter"])
     ax.set_xlabel("Project NPV swing vs baseline (USD million)")
-    ax.set_title(f"Tornado — sensitivity of project NPV (baseline ${base_npv/1e6:,.1f}M @10%)")
+    ax.set_title(
+        f"Tornado — sensitivity of project NPV (baseline ${base_npv / 1e6:,.1f}M @10%)"
+    )
     ax.legend(fontsize=8)
     fig.tight_layout()
-    fig.savefig(OUT / "figures" / "sensitivity_tornado.png", dpi=200, bbox_inches="tight")
+    fig.savefig(
+        OUT / "figures" / "sensitivity_tornado.png", dpi=200, bbox_inches="tight"
+    )
     plt.close(fig)
     print("  wrote outputs/figures/sensitivity_tornado.png")
 
@@ -97,11 +147,38 @@ def fig_tornado(base_npv, df):
 def scenario_comparison(cfg):
     cases = [
         {"name": "Baseline (mixed)", "cfg": copy.deepcopy(cfg)},
-        {"name": "Gas $6.0 (low)", "cfg": deep_merge(copy.deepcopy(cfg), {"fuel": {"price_usd_per_mmbtu": 6.0}})},
-        {"name": "Gas $10.5 (high)", "cfg": deep_merge(copy.deepcopy(cfg), {"fuel": {"price_usd_per_mmbtu": 10.5}})},
-        {"name": "AI-heavy load", "cfg": deep_merge(copy.deepcopy(cfg), {"data_center": {"baseline_load_scenario": "ai_heavy"}})},
-        {"name": "Cloud-heavy load", "cfg": deep_merge(copy.deepcopy(cfg), {"data_center": {"baseline_load_scenario": "cloud_heavy"}})},
-        {"name": "Load-following", "cfg": deep_merge(copy.deepcopy(cfg), {"ppa": {"dispatch_mode": "load_following"}})},
+        {
+            "name": "Gas $6.0 (low)",
+            "cfg": deep_merge(
+                copy.deepcopy(cfg), {"fuel": {"price_usd_per_mmbtu": 6.0}}
+            ),
+        },
+        {
+            "name": "Gas $10.5 (high)",
+            "cfg": deep_merge(
+                copy.deepcopy(cfg), {"fuel": {"price_usd_per_mmbtu": 10.5}}
+            ),
+        },
+        {
+            "name": "AI-heavy load",
+            "cfg": deep_merge(
+                copy.deepcopy(cfg),
+                {"data_center": {"baseline_load_scenario": "ai_heavy"}},
+            ),
+        },
+        {
+            "name": "Cloud-heavy load",
+            "cfg": deep_merge(
+                copy.deepcopy(cfg),
+                {"data_center": {"baseline_load_scenario": "cloud_heavy"}},
+            ),
+        },
+        {
+            "name": "Load-following",
+            "cfg": deep_merge(
+                copy.deepcopy(cfg), {"ppa": {"dispatch_mode": "load_following"}}
+            ),
+        },
     ]
     rows = []
     for case in cases:
@@ -132,7 +209,9 @@ def fig_scenarios(df):
     axes[1].tick_params(axis="x", rotation=20)
     axes[1].set_title("IRR by scenario")
     fig.tight_layout()
-    fig.savefig(OUT / "figures" / "scenario_comparison.png", dpi=200, bbox_inches="tight")
+    fig.savefig(
+        OUT / "figures" / "scenario_comparison.png", dpi=200, bbox_inches="tight"
+    )
     plt.close(fig)
     print("  wrote outputs/figures/scenario_comparison.png")
 
@@ -156,10 +235,20 @@ def main(argv=None):
         fig_tornado(base_npv, tor)
         fig_scenarios(comp)
     rows = list(tor.itertuples())[-4:]
-    print("Tornado NPV spread: " + ", ".join(
-        f"{r.parameter} ${(r.npv_high_usd - r.npv_low_usd)/1e6:+.1f}M" for r in rows))
-    print("Scenario NPV: " + "; ".join(
-        f"{row.scenario}={row.project_npv_usd/1e6:.1f}M" for row in comp.itertuples()))
+    print(
+        "Tornado NPV spread: "
+        + ", ".join(
+            f"{r.parameter} ${(r.npv_high_usd - r.npv_low_usd) / 1e6:+.1f}M"
+            for r in rows
+        )
+    )
+    print(
+        "Scenario NPV: "
+        + "; ".join(
+            f"{row.scenario}={row.project_npv_usd / 1e6:.1f}M"
+            for row in comp.itertuples()
+        )
+    )
     print("  wrote outputs/tables/sensitivity_tornado.csv, sensitivity_scenarios.csv")
 
 

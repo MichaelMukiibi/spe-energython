@@ -1,4 +1,5 @@
 """Configuration loading: baselines.yaml + point-scenario overrides (deep merge)."""
+
 from __future__ import annotations
 
 import copy

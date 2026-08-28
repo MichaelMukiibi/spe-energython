@@ -6,26 +6,26 @@ this file is the top-level inventory.
 
 ## Manufacturer datasheets & brochures
 
-| Source | What it supports |
-|---|---|
+| Source                                                                                      | What it supports                                                                              |
+| ------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
 | Kawasaki GPB80D (M7A-03D) datasheet (`technical-team-research/assets/datasheets/01-...pdf`) | Chosen GT: 7.67–7.81 MWe, 33.3–33.6% eff, 27.11 kg/s @ 526°C exhaust, heat rate 10,820 kJ/kWh |
-| Kawasaki GPB180D datasheets (`02-...pdf`, `03-...pdf`) | Rejected larger model (evaluation basis) |
-| Siemens GT portfolio brochure (`04-...pdf`, gitignored, re-downloadable) | Turbine comparison: SGT-750 (41 MWe), SGT-A35 (34–36.5 MWe) rejection rationale |
-| Siemens CCPP offshore brochure (`05-...pdf`, gitignored) | CCGT context / multi-shaft configurations |
-| Siemens combined-cycle web PDF (`06-...pdf`, gitignored) | CCPP design overview, single vs multi-shaft |
+| Kawasaki GPB180D datasheets (`02-...pdf`, `03-...pdf`)                                      | Rejected larger model (evaluation basis)                                                      |
+| Siemens GT portfolio brochure (`04-...pdf`, gitignored, re-downloadable)                    | Turbine comparison: SGT-750 (41 MWe), SGT-A35 (34–36.5 MWe) rejection rationale               |
+| Siemens CCPP offshore brochure (`05-...pdf`, gitignored)                                    | CCGT context / multi-shaft configurations                                                     |
+| Siemens combined-cycle web PDF (`06-...pdf`, gitignored)                                    | CCPP design overview, single vs multi-shaft                                                   |
 
 ## Original research session exports (merged → `research/technical-team-research/research/`)
 
-| Merged doc | Original sources |
-|---|---|
-| 01-ccpp-design-report.md | 2x Gemini comprehensive reports, `Act as a Senior Power Plant Systems Engineer...`, `what is critical here` |
-| 02-gas-turbine-selection.md | `Act as a Senior...`, `what is critical here` |
-| 03-steam-turbine-selection.md | `So, which series...`, `New Microsoft Word Document` (verification) |
-| 04-generators.md | BRUSH DG overview, Siemens SGM analysis, Marelli (voltage/rating/compat/6.6 kV) chat exports |
-| 05-hrsg-thermal-modeling.md | `Uh so if we are finding out...`, Gemini exports §3 |
-| 06-electrical-topology.md | `So when they go to grid...`, image-topology chat, `I have finally understood you...` |
-| 07-fuel-logistics.md | Gemini export §5 (CNG virtual pipeline), fuel thread in `New Microsoft Word Document` |
-| 08-plant-layout.md | `plant_layout.docx`, `New Microsoft Word Document`, `plant_layout.html` (3D) |
+| Merged doc                    | Original sources                                                                                            |
+| ----------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| 01-ccpp-design-report.md      | 2x Gemini comprehensive reports, `Act as a Senior Power Plant Systems Engineer...`, `what is critical here` |
+| 02-gas-turbine-selection.md   | `Act as a Senior...`, `what is critical here`                                                               |
+| 03-steam-turbine-selection.md | `So, which series...`, `New Microsoft Word Document` (verification)                                         |
+| 04-generators.md              | BRUSH DG overview, Siemens SGM analysis, Marelli (voltage/rating/compat/6.6 kV) chat exports                |
+| 05-hrsg-thermal-modeling.md   | `Uh so if we are finding out...`, Gemini exports §3                                                         |
+| 06-electrical-topology.md     | `So when they go to grid...`, image-topology chat, `I have finally understood you...`                       |
+| 07-fuel-logistics.md          | Gemini export §5 (CNG virtual pipeline), fuel thread in `New Microsoft Word Document`                       |
+| 08-plant-layout.md            | `plant_layout.docx`, `New Microsoft Word Document`, `plant_layout.html` (3D)                                |
 
 ## CS#1 data center & load profiling (this repo)
 

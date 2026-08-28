@@ -1,4 +1,5 @@
 """Operational dispatch and availability simulation."""
+
 from __future__ import annotations
 
 import numpy as np
@@ -23,7 +24,7 @@ def availability_mask(cfg, year, hours=8760):
     planned = int(e.get("planned_outage_hours", 168))
     if planned > 0:
         offset = (seed * 7) % (hours - planned)
-        gt_on[offset:offset + planned, :] = False
+        gt_on[offset : offset + planned, :] = False
     return gt_on
 
 
